@@ -850,12 +850,16 @@ containing a value of this type.
         public static final int abs__bright_foreground_disabled_holo_light=0x7f060006;
         public static final int abs__bright_foreground_holo_dark=0x7f060003;
         public static final int abs__bright_foreground_holo_light=0x7f060004;
-        public static final int abs__primary_text_disable_only_holo_dark=0x7f060008;
-        public static final int abs__primary_text_disable_only_holo_light=0x7f060009;
-        public static final int abs__primary_text_holo_dark=0x7f06000a;
-        public static final int abs__primary_text_holo_light=0x7f06000b;
+        public static final int abs__primary_text_disable_only_holo_dark=0x7f06000c;
+        public static final int abs__primary_text_disable_only_holo_light=0x7f06000d;
+        public static final int abs__primary_text_holo_dark=0x7f06000e;
+        public static final int abs__primary_text_holo_light=0x7f06000f;
         public static final int default_progress_bar_color=0x7f060007;
+        public static final int list_background=0x7f060008;
+        public static final int list_background_pressed=0x7f060009;
         public static final int spb_default_color=0x7f060000;
+        public static final int title_article_detail=0x7f06000a;
+        public static final int title_category=0x7f06000b;
     }
     public static final class dimen {
         /**  Default height of an action bar. 
@@ -1080,6 +1084,7 @@ containing a value of this type.
         public static final int abs__textfield_searchview_right_holo_light=0x7f02006e;
         public static final int abs__toast_frame=0x7f02006f;
         public static final int ic_launcher=0x7f020070;
+        public static final int list_item_bg_normal=0x7f020071;
     }
     public static final class id {
         public static final int abs__action_bar=0x7f050029;
@@ -1121,12 +1126,15 @@ containing a value of this type.
         public static final int abs__textButton=0x7f05001c;
         public static final int abs__title=0x7f050024;
         public static final int abs__up=0x7f05000f;
-        public static final int action_settings=0x7f05003b;
+        public static final int action_settings=0x7f05003e;
+        public static final int content_frame=0x7f05003c;
         public static final int disableHome=0x7f05000d;
+        public static final int drawer_layout=0x7f05003b;
         public static final int edit_query=0x7f05002f;
         public static final int homeAsUp=0x7f05000a;
         public static final int inside=0x7f050014;
         public static final int listMode=0x7f050006;
+        public static final int lv_left_menu=0x7f05003d;
         public static final int normal=0x7f050005;
         public static final int outside=0x7f050015;
         public static final int ptr_content=0x7f050016;
@@ -1170,7 +1178,7 @@ containing a value of this type.
         public static final int abs__search_dropdown_item_icons_2line=0x7f030012;
         public static final int abs__search_view=0x7f030013;
         public static final int abs__simple_dropdown_hint=0x7f030014;
-        public static final int activity_content=0x7f030015;
+        public static final int activity_container=0x7f030015;
         public static final int default_header=0x7f030016;
         public static final int sherlock_spinner_dropdown_item=0x7f030017;
         public static final int sherlock_spinner_item=0x7f030018;
