@@ -5,6 +5,7 @@ public class Constant {
 	 * App Settings
 	 */
 	public static final boolean IS_APP_LOG_ENABLED = false;
+	public static final int APP_DEFAULT_VERSION = 1;
 	
 	/**
 	 *  Activities
