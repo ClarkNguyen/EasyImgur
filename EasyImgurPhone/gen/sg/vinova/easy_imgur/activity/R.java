@@ -12,6 +12,11 @@ public final class R {
         public static final int fade_in=0x7f040000;
         public static final int fade_out=0x7f040001;
     }
+    public static final class array {
+        /**  Left menu categories 
+         */
+        public static final int menu_categories=0x7f0c0000;
+    }
     public static final class attr {
         /**  Custom divider drawable to use for elements in the action bar. 
          <p>Must be a reference to another resource, in the form "<code>@[+][<i>package</i>:]<i>type</i>:<i>name</i></code>"
@@ -1083,8 +1088,10 @@ containing a value of this type.
         public static final int abs__textfield_searchview_right_holo_dark=0x7f02006d;
         public static final int abs__textfield_searchview_right_holo_light=0x7f02006e;
         public static final int abs__toast_frame=0x7f02006f;
-        public static final int ic_launcher=0x7f020070;
-        public static final int list_item_bg_normal=0x7f020071;
+        public static final int drawer_shadow=0x7f020070;
+        public static final int ic_drawer=0x7f020071;
+        public static final int ic_launcher=0x7f020072;
+        public static final int list_item_bg_normal=0x7f020073;
     }
     public static final class id {
         public static final int abs__action_bar=0x7f050029;
@@ -1184,7 +1191,7 @@ containing a value of this type.
         public static final int sherlock_spinner_item=0x7f030018;
     }
     public static final class menu {
-        public static final int content=0x7f0c0000;
+        public static final int content=0x7f0d0000;
     }
     public static final class string {
         /**  Content description for the action bar "home" affordance. [CHAR LIMIT=NONE] 

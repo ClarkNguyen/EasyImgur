@@ -1,13 +1,18 @@
 package sg.vinova.easy_imgur.networking;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import sg.vinova.easy_imgur.base.Constant;
 import sg.vinova.easy_imgur.utilities.LogUtility;
+import sg.vinova.easy_imgur.utilities.TokenUtility;
 import android.content.Context;
+import android.text.TextUtils;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.Request.Method;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -71,7 +76,19 @@ public class ImgurAPI {
 			Response.ErrorListener errorListener) {
 		RequestQueue mRequestQueue = getRequestQueue();
 		JsonObjectRequest jsonRequest = new JsonObjectRequest(Method.GET,
-				generateFullUrl(url, params), null, listener, errorListener);
+				generateFullUrl(url, params), null, listener, errorListener){
+			@Override
+			public Map<String, String> getHeaders()
+					throws AuthFailureError {
+				HashMap<String, String> params = new HashMap<String, String>();
+				if (!TextUtils.isEmpty(TokenUtility.getToken())) {
+					params.put("Authorization", "Bearer " + TokenUtility.getToken());
+				} else {
+					params.put("Authorization", "Client-ID " + Constant.CLIENT_ID);
+				}
+		        return params;
+			}
+		};
 		mRequestQueue.add(jsonRequest);
 	}
 
@@ -92,5 +109,30 @@ public class ImgurAPI {
 				params, listener, errorListener);
 		mRequestQueue.add(jsonRequest);
 		LogUtility.e(TAG, "post url: " + url);
+	}
+	
+	/**********************
+	 ******* GALLERY ******
+	 **********************/
+	
+	public void getAllGallery(Context mContext, String section, int page, 
+			String sort, String window, boolean showViral,
+			Response.Listener<JSONObject> listener,
+			Response.ErrorListener errorListener){
+		String url = "gallery/";
+		url += section + "/";
+		
+		if (!TextUtils.isEmpty(sort)) {
+			url += sort +"/";
+		}
+		if (section.equalsIgnoreCase(Constant.PARAM_TYPE_SECTION_TOP) && !TextUtils.isEmpty(window)) {
+			url += window + "/";
+		}
+		url += page;
+		
+		HashMap<String, String> params = new HashMap<String, String>();
+		params.put(Constant.PARAM_SHOW_VIRAL, String.valueOf(showViral));
+		
+		ImgurAPI.get(getUrl(url), params, listener, errorListener);
 	}
 }

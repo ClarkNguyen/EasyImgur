@@ -1,5 +1,6 @@
 package sg.vinova.easy_imgur.application;
 
+import sg.vinova.easy_imgur.networking.ImgurAPI;
 import android.app.Application;
 import android.content.Context;
 
@@ -17,6 +18,13 @@ public class EasyImgurApplication extends Application {
 		
 		// init image loader
 		initImageLoader(getApplicationContext());
+		
+		// init networking
+		initNetworking(getApplicationContext());
+	}
+	
+	public static void initNetworking(Context mContext) {
+		ImgurAPI.init(mContext);
 	}
 	
 	public static void initImageLoader(Context context) {
