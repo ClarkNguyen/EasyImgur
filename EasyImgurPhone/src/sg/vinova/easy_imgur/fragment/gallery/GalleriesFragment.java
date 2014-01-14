@@ -14,21 +14,19 @@ import sg.vinova.easy_imgur.networking.ImgurAPI;
 import uk.co.senab.actionbarpulltorefresh.extras.actionbarsherlock.PullToRefreshLayout;
 import uk.co.senab.actionbarpulltorefresh.library.ActionBarPullToRefresh;
 import uk.co.senab.actionbarpulltorefresh.library.listeners.OnRefreshListener;
-import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
-import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import com.android.volley.Response;
 import com.android.volley.Response.Listener;
+import com.makeramen.RoundedImageView;
 
 public class GalleriesFragment extends BaseFragment implements
 		OnRefreshListener {
@@ -152,10 +150,10 @@ public class GalleriesFragment extends BaseFragment implements
 
 			if (row == null) {
 				row = LayoutInflater.from(mContext).inflate(
-						R.layout.row_gallery, null);
+						R.layout.row_gallery, parent, false);
 				holder = new GalleryHolder();
 				holder.tvTitle = (TextView) row.findViewById(R.id.tvTitle);
-				holder.ivThumb = (ImageView) row.findViewById(R.id.ivThumb);
+				holder.ivThumb = (RoundedImageView) row.findViewById(R.id.ivThumb);
 				
 				row.setTag(holder);
 			} else {
@@ -191,6 +189,6 @@ public class GalleriesFragment extends BaseFragment implements
 
 	static class GalleryHolder {
 		public TextView tvTitle;
-		public ImageView ivThumb;
+		public RoundedImageView ivThumb;
 	}
 }
