@@ -54,9 +54,9 @@ public class BaseActivity extends SherlockFragmentActivity {
 		
 		setImageLoader();
 		options = new DisplayImageOptions.Builder()
-				.showImageOnLoading(R.drawable.ic_launcher)
-				.showImageForEmptyUri(R.drawable.ic_launcher)
-				.showImageOnFail(R.drawable.ic_launcher)
+				.showImageOnLoading(R.drawable.bg_default)
+				.showImageForEmptyUri(R.drawable.bg_default)
+				.showImageOnFail(R.drawable.bg_default)
 				.imageScaleType(ImageScaleType.IN_SAMPLE_INT)
 				.cacheInMemory(true).cacheOnDisc(true).build();
 		

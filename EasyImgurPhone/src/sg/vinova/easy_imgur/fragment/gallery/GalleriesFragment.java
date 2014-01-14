@@ -22,6 +22,8 @@ import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
 import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -72,7 +74,7 @@ public class GalleriesFragment extends BaseFragment implements
 	private void findViews(View view) {
 		// Connect to UI component
 		lvGalleries = (ListView) view.findViewById(R.id.lv_galleries);
-		adapter = new GalleryAdapter(mContext, R.layout.row_gallery, galleries);
+		adapter = new GalleryAdapter(galleries);
 		lvGalleries.setAdapter(adapter);
 
 		lvGalleries.setOnScrollListener(new OnScrollListener() {
@@ -134,13 +136,13 @@ public class GalleriesFragment extends BaseFragment implements
 		};
 	}
 
-	private class GalleryAdapter extends ArrayAdapter<MGallery> {
+	private class GalleryAdapter extends BaseAdapter {
 
+		private List<MGallery> galleries;
 		private GalleryHolder holder;
 
-		public GalleryAdapter(Context context, int resource,
-				List<MGallery> galleries) {
-			super(context, resource, galleries);
+		public GalleryAdapter(List<MGallery> galleries) {
+			this.galleries = galleries;
 		}
 
 		@Override
@@ -153,7 +155,8 @@ public class GalleriesFragment extends BaseFragment implements
 						R.layout.row_gallery, null);
 				holder = new GalleryHolder();
 				holder.tvTitle = (TextView) row.findViewById(R.id.tvTitle);
-
+				holder.ivThumb = (ImageView) row.findViewById(R.id.ivThumb);
+				
 				row.setTag(holder);
 			} else {
 				holder = (GalleryHolder) row.getTag();
@@ -161,13 +164,33 @@ public class GalleriesFragment extends BaseFragment implements
 
 			// fill data to row
 			holder.tvTitle.setText(mGallery.getTitle());
+			if (!mGallery.isAlbum()) {
+				imageLoader.displayImage(mGallery.getLink(), holder.ivThumb, options);
+			}
 
 			return row;
+		}
+
+		@Override
+		public int getCount() {
+			return galleries.size();
+		}
+
+		@Override
+		public Object getItem(int position) {
+			return galleries.get(position);
+		}
+
+		@Override
+		public long getItemId(int position) {
+			// TODO Auto-generated method stub
+			return 0;
 		}
 
 	}
 
 	static class GalleryHolder {
 		public TextView tvTitle;
+		public ImageView ivThumb;
 	}
 }
