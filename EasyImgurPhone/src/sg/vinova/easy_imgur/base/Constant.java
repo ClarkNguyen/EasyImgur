@@ -10,17 +10,6 @@ public class Constant {
 	public static final String CLIENT_SECRET = "880120ee38e14a04e330ba9665f06fed566ed1b3";
 	
 	/**
-	 *  Activities
-	 */
-	public static final String TAG_ACTIVITY_BASE = "BaseActivity";
-	public static final String TAG_ACTIVITY_CONTENT = "ContentActivity";
-	
-	/**
-	 *  Fragments
-	 */
-	public static final String TAG_FRAGMENT_BASE = "BaseFragment";
-	
-	/**
 	 *  Error
 	 */
 	public static final String ERROR = "Error:";

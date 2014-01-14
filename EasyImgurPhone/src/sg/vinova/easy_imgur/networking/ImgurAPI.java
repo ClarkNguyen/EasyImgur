@@ -31,7 +31,7 @@ public class ImgurAPI {
 	private static ImgurAPI imgurClient;
 
 	// Imgur API url
-	private static final String imgurClientUrl = "https://api.imgur.com/3/";
+	private static final String imgurClientUrl = "https://api.imgur.com/3";
 
 	private String url;
 

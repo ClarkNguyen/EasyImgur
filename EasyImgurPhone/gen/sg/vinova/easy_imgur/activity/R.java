@@ -1133,7 +1133,7 @@ containing a value of this type.
         public static final int abs__textButton=0x7f05001c;
         public static final int abs__title=0x7f050024;
         public static final int abs__up=0x7f05000f;
-        public static final int action_settings=0x7f05003e;
+        public static final int action_settings=0x7f050041;
         public static final int content_frame=0x7f05003c;
         public static final int disableHome=0x7f05000d;
         public static final int drawer_layout=0x7f05003b;
@@ -1141,10 +1141,12 @@ containing a value of this type.
         public static final int homeAsUp=0x7f05000a;
         public static final int inside=0x7f050014;
         public static final int listMode=0x7f050006;
+        public static final int lv_galleries=0x7f05003f;
         public static final int lv_left_menu=0x7f05003d;
         public static final int normal=0x7f050005;
         public static final int outside=0x7f050015;
         public static final int ptr_content=0x7f050016;
+        public static final int ptr_layout=0x7f05003e;
         public static final int ptr_progress=0x7f050018;
         public static final int ptr_text=0x7f050017;
         public static final int showCustom=0x7f05000c;
@@ -1155,6 +1157,7 @@ containing a value of this type.
         public static final int spb_interpolator_decelerate=0x7f050003;
         public static final int spb_interpolator_linear=0x7f050001;
         public static final int tabMode=0x7f050007;
+        public static final int tvTitle=0x7f050040;
         public static final int useLogo=0x7f050008;
         public static final int wrap_content=0x7f050004;
     }
@@ -1187,8 +1190,10 @@ containing a value of this type.
         public static final int abs__simple_dropdown_hint=0x7f030014;
         public static final int activity_container=0x7f030015;
         public static final int default_header=0x7f030016;
-        public static final int sherlock_spinner_dropdown_item=0x7f030017;
-        public static final int sherlock_spinner_item=0x7f030018;
+        public static final int galleries_fragment=0x7f030017;
+        public static final int row_gallery=0x7f030018;
+        public static final int sherlock_spinner_dropdown_item=0x7f030019;
+        public static final int sherlock_spinner_item=0x7f03001a;
     }
     public static final class menu {
         public static final int content=0x7f0d0000;

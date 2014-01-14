@@ -1,8 +1,6 @@
 package sg.vinova.easy_imgur.activity;
 
-import com.actionbarsherlock.view.MenuItem;
-
-import sg.vinova.easy_imgur.base.Constant;
+import sg.vinova.easy_imgur.fragment.gallery.GalleriesFragment;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -11,10 +9,14 @@ import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
-public class ContentActivity extends BaseActivity {
+import com.actionbarsherlock.view.MenuItem;
+
+public class ContentActivity extends BaseActivity implements OnItemClickListener{
 	
 	// TAG
 	public static final String TAG = "ContentActivity";
@@ -24,6 +26,7 @@ public class ContentActivity extends BaseActivity {
 	private DrawerLayout drawerLayout;
 	
 	// List menu categories
+	private String[] categories;
 	private ListView lvCategories;
 
 	// current action bar title
@@ -40,8 +43,8 @@ public class ContentActivity extends BaseActivity {
 
 		if (savedInstanceState != null) {
 			mainContent = getSupportFragmentManager().getFragment(
-					savedInstanceState, Constant.TAG_ACTIVITY_CONTENT);
-			setContentForAboveView(mainContent, Constant.TAG_ACTIVITY_CONTENT);
+					savedInstanceState, TAG);
+			setContentForAboveView(mainContent, TAG);
 		} else {
 			this.setPendingMessageIdFromIntent(getIntent());
 		}
@@ -56,8 +59,9 @@ public class ContentActivity extends BaseActivity {
 	private void findViews() {
 		// Connect to UI component
 		lvCategories = (ListView) findViewById(R.id.lv_left_menu);
-		String[] categories = getResources().getStringArray(R.array.menu_categories);
+		categories = getResources().getStringArray(R.array.menu_categories);
 		lvCategories.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, categories));
+		lvCategories.setOnItemClickListener(this);
 		
 		/**
 		 * Find views for drawer
@@ -177,4 +181,25 @@ public class ContentActivity extends BaseActivity {
 		currentTitle = title;
 		actionBar.setTitle(currentTitle);
 	}
+
+	@Override
+	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+		// set actionbar title
+		actionBar.setTitle(categories[position]);
+		
+		switch (position) {
+		case 0:
+			switchContent(new GalleriesFragment(), true, true, GalleriesFragment.TAG);
+			break;
+
+		default:
+			break;
+		}
+		
+		lvCategories.setItemChecked(position, true);
+		if (drawerLayout.isDrawerOpen(lvCategories)) {
+			drawerLayout.closeDrawer(lvCategories);
+		}
+	}
+	
 }

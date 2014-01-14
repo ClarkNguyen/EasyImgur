@@ -79,6 +79,14 @@ public class BaseActivity extends SherlockFragmentActivity {
 	}
 	
 	/**
+	 * Get Image option for image loader
+	 * @return
+	 */
+	public DisplayImageOptions getImageLoaderOptions() {
+		return options;
+	}
+
+	/**
 	 * Listener for error response
 	 * @return
 	 */
