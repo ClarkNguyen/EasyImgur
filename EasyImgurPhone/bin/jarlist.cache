@@ -1,8 +1,13 @@
 # cache for current jar dependency. DO NOT EDIT.
 # format is <lastModified> <length> <SHA-1> <path>
 # Encoding is UTF-8
+<<<<<<< HEAD
+1389599347795 621451 5896b0a4e377ac4242eb2bc785220c1c4fc052f4 D:\Android\workspace3\EasyImgur\EasyImgurPhone\libs\android-support-v4.jar
+1389599351179 621451 5896b0a4e377ac4242eb2bc785220c1c4fc052f4 D:\Android\workspace3\EasyImgur\actionbarsherlock\libs\android-support-v4.jar
+=======
 1389238294000 621451 5896b0a4e377ac4242eb2bc785220c1c4fc052f4 /Users/clark/Projects/Android/EasyImgur/actionbarsherlock/libs/android-support-v4.jar
 1389758658000 621451 5896b0a4e377ac4242eb2bc785220c1c4fc052f4 /Users/clark/Projects/Android/EasyImgur/ion/libs/android-support-v4.jar
 1389599366000 621451 5896b0a4e377ac4242eb2bc785220c1c4fc052f4 /Users/clark/Projects/Android/EasyImgur/EasyImgurPhone/libs/android-support-v4.jar
 1389603100000 190418 973e832af433b44c3ed11c426f2f390b29f3f3f8 /Users/clark/Projects/Android/EasyImgur/EasyImgurPhone/libs/gson-2.2.4.jar
 1389376852000 190418 973e832af433b44c3ed11c426f2f390b29f3f3f8 /Users/clark/Projects/Android/EasyImgur/ion/libs/gson-2.2.4.jar
+>>>>>>> 18e13560912330588f240e2ef4a16ae064ee0521
