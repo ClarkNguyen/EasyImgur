@@ -16,7 +16,6 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
-import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.nostra13.universalimageloader.core.assist.ImageScaleType;
 
 /**
@@ -35,7 +34,7 @@ public class BaseActivity extends SherlockFragmentActivity {
 	 * Settings for image loading
 	 */
 	protected ImageLoader imageLoader;
-	protected DisplayImageOptions optionsLeftMenu;
+	protected DisplayImageOptions options;
 	
 	/**
 	 * Action bar
@@ -47,7 +46,6 @@ public class BaseActivity extends SherlockFragmentActivity {
 	 */
 	private String currentFragment;
 	
-	@SuppressWarnings("deprecation")
 	@Override
 	protected void onCreate(Bundle arg0) {
 		// Request use progress loading bar feature
@@ -55,10 +53,10 @@ public class BaseActivity extends SherlockFragmentActivity {
 		super.onCreate(arg0);
 		
 		setImageLoader();
-		optionsLeftMenu = new DisplayImageOptions.Builder()
-				.showStubImage(R.drawable.ic_launcher)
-				.showImageForEmptyUri(R.drawable.ic_launcher)
-				.showImageOnFail(R.drawable.ic_launcher)
+		options = new DisplayImageOptions.Builder()
+				.showImageOnLoading(R.drawable.bg_default)
+				.showImageForEmptyUri(R.drawable.bg_default)
+				.showImageOnFail(R.drawable.bg_default)
 				.imageScaleType(ImageScaleType.IN_SAMPLE_INT)
 				.cacheInMemory(true).cacheOnDisc(true).build();
 		
@@ -70,7 +68,6 @@ public class BaseActivity extends SherlockFragmentActivity {
 	 */
 	private void setImageLoader() {
 		imageLoader = ImageLoader.getInstance();
-		imageLoader.init(ImageLoaderConfiguration.createDefault(getBaseContext()));
 	}
 	
 	/**
@@ -81,6 +78,14 @@ public class BaseActivity extends SherlockFragmentActivity {
 		return imageLoader;
 	}
 	
+	/**
+	 * Get Image option for image loader
+	 * @return
+	 */
+	public DisplayImageOptions getImageLoaderOptions() {
+		return options;
+	}
+
 	/**
 	 * Listener for error response
 	 * @return

@@ -4,5 +4,12 @@
     <string name="app_name">Easy Imgur</string>
     <string name="action_settings">Settings</string>
     <string name="hello_world">Hello world!</string>
+    
+    <!-- Left menu categories -->
+    <string-array name="menu_categories">
+        <item >Galleries</item>
+        <item >Albums</item>
+        <item >My Photos</item>
+    </string-array>
 
 </resources>
