@@ -50,6 +50,10 @@ public class BaseFragment extends SherlockFragment {
 		return null;
 	}
 	
+	/**********************************
+	 ********* Switch content ********* 
+	 **********************************/
+	
 	public void switchContent(Fragment fragment, boolean addToBackstack,
 			boolean clearBackstack) {
 		if (getActivity() == null) {

@@ -11,11 +11,13 @@ import sg.vinova.easy_imgur.base.DataParsingController;
 import sg.vinova.easy_imgur.fragment.base.BaseFragment;
 import sg.vinova.easy_imgur.models.MGallery;
 import sg.vinova.easy_imgur.networking.ImgurAPI;
+import sg.vinova.easy_imgur.widgets.EllipsizingTextView;
 import uk.co.senab.actionbarpulltorefresh.extras.actionbarsherlock.PullToRefreshLayout;
 import uk.co.senab.actionbarpulltorefresh.library.ActionBarPullToRefresh;
 import uk.co.senab.actionbarpulltorefresh.library.listeners.OnRefreshListener;
 import android.content.Context;
 import android.os.Bundle;
+import android.text.format.DateFormat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -160,9 +162,16 @@ public class GalleriesFragment extends BaseFragment implements
 				row = LayoutInflater.from(mContext).inflate(
 						R.layout.row_gallery, parent, false);
 				holder = new GalleryHolder();
-				holder.tvTitle = (TextView) row.findViewById(R.id.tvTitle);
+				holder.tvTitle = (EllipsizingTextView) row
+						.findViewById(R.id.tvTitle);
+				holder.tvTitle.setMaxLines(2);
 				holder.ivThumb = (ImageView) row.findViewById(R.id.ivThumb);
-				holder.ibGifPlay = (ImageButton) row.findViewById(R.id.ibGifPlay);
+				holder.ibGifPlay = (ImageButton) row
+						.findViewById(R.id.ibGifPlay);
+				holder.tvUpCount = (TextView) row.findViewById(R.id.tvUpCount);
+				holder.tvDownCount = (TextView) row
+						.findViewById(R.id.tvDownCount);
+				holder.tvTime = (TextView) row.findViewById(R.id.tvTime);
 
 				row.setTag(holder);
 			} else {
@@ -171,22 +180,16 @@ public class GalleriesFragment extends BaseFragment implements
 
 			// fill data to row
 			holder.tvTitle.setText(mGallery.getTitle());
+			holder.tvUpCount.setText(mGallery.getUps() + "");
+			holder.tvDownCount.setText(mGallery.getDowns() + "");
+			holder.tvTime.setText(DateFormat.format("MM-dd-yyyy",
+					Long.valueOf(mGallery.getDatetime()) * 1000));
+
 			if (!mGallery.isAlbum()) {
 				if (mGallery.isAnimated()) {
 					holder.ibGifPlay.setVisibility(View.VISIBLE);
 					holder.ivThumb.setImageDrawable(getResources().getDrawable(
 							R.drawable.bg_default));
-//					Ion.with(holder.ivThumb).load(mGallery.getLink());
-//					holder.ivThumb.setImageDrawable(getResources().getDrawable(
-//							R.drawable.bg_default));
-//					holder.ibGifPlay.setOnClickListener(new OnClickListener() {
-//						
-//						@Override
-//						public void onClick(View v) {
-//							holder.ibGifPlay.setVisibility(View.GONE);
-//							Ion.with(holder.ivThumb).load(mGallery.getLink());
-//						}
-//					});
 				} else {
 					holder.ibGifPlay.setVisibility(View.GONE);
 					imageLoader.displayImage(mGallery.getLink(),
@@ -204,13 +207,18 @@ public class GalleriesFragment extends BaseFragment implements
 	}
 
 	static class GalleryHolder {
-		public TextView tvTitle;
+		public EllipsizingTextView tvTitle;
 		public ImageView ivThumb;
 		public ImageButton ibGifPlay;
+		public TextView tvUpCount;
+		public TextView tvDownCount;
+		public TextView tvTime;
 	}
 
 	@Override
-	public void onItemClick(AdapterView<?> parent, View view, int position, long itemId) {
-		switchContent(new GalleriesArticleFragment(galleries.get(position)), true, GalleriesArticleFragment.TAG);
+	public void onItemClick(AdapterView<?> parent, View view, int position,
+			long itemId) {
+		switchContent(new GalleriesArticleFragment(galleries.get(position)),
+				true, GalleriesArticleFragment.TAG);
 	}
 }

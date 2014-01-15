@@ -1135,12 +1135,17 @@ containing a value of this type.
         public static final int abs__toast_frame=0x7f02006f;
         public static final int bg_default=0x7f020070;
         public static final int bg_gallery=0x7f020071;
-        public static final int drawer_shadow=0x7f020072;
-        public static final int ic_drawer=0x7f020073;
-        public static final int ic_gif_play=0x7f020074;
-        public static final int ic_launcher=0x7f020075;
-        public static final int ic_loader=0x7f020076;
-        public static final int list_item_bg_normal=0x7f020077;
+        public static final int bg_gallery_row=0x7f020072;
+        public static final int bg_row_gallery=0x7f020073;
+        public static final int drawer_shadow=0x7f020074;
+        public static final int ic_clock=0x7f020075;
+        public static final int ic_drawer=0x7f020076;
+        public static final int ic_gif_play=0x7f020077;
+        public static final int ic_launcher=0x7f020078;
+        public static final int ic_loader=0x7f020079;
+        public static final int ic_vote_down=0x7f02007a;
+        public static final int ic_vote_up=0x7f02007b;
+        public static final int list_item_bg_normal=0x7f02007c;
     }
     public static final class id {
         public static final int abs__action_bar=0x7f050029;
@@ -1182,15 +1187,17 @@ containing a value of this type.
         public static final int abs__textButton=0x7f05001c;
         public static final int abs__title=0x7f050024;
         public static final int abs__up=0x7f05000f;
-        public static final int action_settings=0x7f050043;
+        public static final int action_settings=0x7f050048;
         public static final int content_frame=0x7f05003c;
         public static final int disableHome=0x7f05000d;
         public static final int drawer_layout=0x7f05003b;
         public static final int edit_query=0x7f05002f;
         public static final int homeAsUp=0x7f05000a;
-        public static final int ibGifPlay=0x7f050042;
+        public static final int ibGifPlay=0x7f050043;
         public static final int inside=0x7f050014;
-        public static final int ivThumb=0x7f050041;
+        public static final int ivThumb=0x7f050042;
+        public static final int ivVoteDown=0x7f050046;
+        public static final int ivVoteUp=0x7f050044;
         public static final int listMode=0x7f050006;
         public static final int lv_galleries=0x7f05003f;
         public static final int lv_left_menu=0x7f05003d;
@@ -1208,7 +1215,10 @@ containing a value of this type.
         public static final int spb_interpolator_decelerate=0x7f050003;
         public static final int spb_interpolator_linear=0x7f050001;
         public static final int tabMode=0x7f050007;
+        public static final int tvDownCount=0x7f050047;
+        public static final int tvTime=0x7f050041;
         public static final int tvTitle=0x7f050040;
+        public static final int tvUpCount=0x7f050045;
         public static final int useLogo=0x7f050008;
         public static final int wrap_content=0x7f050004;
     }
