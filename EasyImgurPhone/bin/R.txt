@@ -285,8 +285,10 @@ int drawable bg_default 0x7f020070
 int drawable bg_gallery 0x7f020071
 int drawable drawer_shadow 0x7f020072
 int drawable ic_drawer 0x7f020073
-int drawable ic_launcher 0x7f020074
-int drawable list_item_bg_normal 0x7f020075
+int drawable ic_gif_play 0x7f020074
+int drawable ic_launcher 0x7f020075
+int drawable ic_loader 0x7f020076
+int drawable list_item_bg_normal 0x7f020077
 int id abs__action_bar 0x7f050029
 int id abs__action_bar_container 0x7f050028
 int id abs__action_bar_subtitle 0x7f05001a
@@ -326,12 +328,13 @@ int id abs__submit_area 0x7f050038
 int id abs__textButton 0x7f05001c
 int id abs__title 0x7f050024
 int id abs__up 0x7f05000f
-int id action_settings 0x7f050042
+int id action_settings 0x7f050043
 int id content_frame 0x7f05003c
 int id disableHome 0x7f05000d
 int id drawer_layout 0x7f05003b
 int id edit_query 0x7f05002f
 int id homeAsUp 0x7f05000a
+int id ibGifPlay 0x7f050042
 int id inside 0x7f050014
 int id ivThumb 0x7f050041
 int id listMode 0x7f050006

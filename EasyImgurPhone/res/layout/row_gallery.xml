@@ -19,17 +19,30 @@
             android:padding="5dp"
             android:textSize="16sp" />
 
-        <com.makeramen.RoundedImageView
-            android:id="@+id/ivThumb"
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="12dp"
-            android:scaleType="centerCrop"
-            android:src="@drawable/bg_default"
-            app:border_color="#333333"
-            app:border_width="1dp"
-            app:corner_radius="10dp"
-            app:round_background="true" />
+            android:layout_height="match_parent" >
+
+            <ImageView
+                android:id="@+id/ivThumb"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:layout_margin="12dp"
+                android:contentDescription="@string/app_name"
+                android:scaleType="centerCrop"
+                android:src="@drawable/bg_default" />
+
+            <ImageButton
+                android:id="@+id/ibGifPlay"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:background="@android:color/transparent"
+                android:contentDescription="@string/app_name"
+                android:src="@drawable/ic_gif_play"
+                android:visibility="gone" />
+        </RelativeLayout>
     </LinearLayout>
 
 </LinearLayout>

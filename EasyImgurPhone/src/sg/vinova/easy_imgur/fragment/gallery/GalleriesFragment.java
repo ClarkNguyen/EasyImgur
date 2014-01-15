@@ -11,22 +11,27 @@ import sg.vinova.easy_imgur.base.DataParsingController;
 import sg.vinova.easy_imgur.fragment.base.BaseFragment;
 import sg.vinova.easy_imgur.models.MGallery;
 import sg.vinova.easy_imgur.networking.ImgurAPI;
+import sg.vinova.easy_imgur.utilities.LogUtility;
 import uk.co.senab.actionbarpulltorefresh.extras.actionbarsherlock.PullToRefreshLayout;
 import uk.co.senab.actionbarpulltorefresh.library.ActionBarPullToRefresh;
 import uk.co.senab.actionbarpulltorefresh.library.listeners.OnRefreshListener;
+import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
-import android.widget.BaseAdapter;
+import android.widget.ArrayAdapter;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import com.android.volley.Response;
 import com.android.volley.Response.Listener;
-import com.makeramen.RoundedImageView;
+import com.koushikdutta.ion.Ion;
 
 public class GalleriesFragment extends BaseFragment implements
 		OnRefreshListener {
@@ -72,7 +77,7 @@ public class GalleriesFragment extends BaseFragment implements
 	private void findViews(View view) {
 		// Connect to UI component
 		lvGalleries = (ListView) view.findViewById(R.id.lv_galleries);
-		adapter = new GalleryAdapter(galleries);
+		adapter = new GalleryAdapter(mContext, R.layout.row_gallery, galleries);
 		lvGalleries.setAdapter(adapter);
 
 		lvGalleries.setOnScrollListener(new OnScrollListener() {
@@ -123,7 +128,8 @@ public class GalleriesFragment extends BaseFragment implements
 			@Override
 			public void onResponse(JSONObject json) {
 				isMore = true;
-				List<MGallery> lstTmp = DataParsingController.parseGalleries(json);
+				List<MGallery> lstTmp = DataParsingController
+						.parseGalleries(json);
 				if (page == 0) {
 					galleries.clear();
 				}
@@ -134,27 +140,30 @@ public class GalleriesFragment extends BaseFragment implements
 		};
 	}
 
-	private class GalleryAdapter extends BaseAdapter {
+	private class GalleryAdapter extends ArrayAdapter<MGallery> {
 
 		private List<MGallery> galleries;
 		private GalleryHolder holder;
 
-		public GalleryAdapter(List<MGallery> galleries) {
-			this.galleries = galleries;
+		public GalleryAdapter(Context context, int resource,
+				List<MGallery> objects) {
+			super(context, resource, objects);
+			this.galleries = objects;
 		}
 
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
 			View row = convertView;
-			MGallery mGallery = galleries.get(position);
+			final MGallery mGallery = galleries.get(position);
 
 			if (row == null) {
 				row = LayoutInflater.from(mContext).inflate(
 						R.layout.row_gallery, parent, false);
 				holder = new GalleryHolder();
 				holder.tvTitle = (TextView) row.findViewById(R.id.tvTitle);
-				holder.ivThumb = (RoundedImageView) row.findViewById(R.id.ivThumb);
-				
+				holder.ivThumb = (ImageView) row.findViewById(R.id.ivThumb);
+				holder.ibGifPlay = (ImageButton) row.findViewById(R.id.ibGifPlay);
+
 				row.setTag(holder);
 			} else {
 				holder = (GalleryHolder) row.getTag();
@@ -163,32 +172,38 @@ public class GalleriesFragment extends BaseFragment implements
 			// fill data to row
 			holder.tvTitle.setText(mGallery.getTitle());
 			if (!mGallery.isAlbum()) {
-				imageLoader.displayImage(mGallery.getLink(), holder.ivThumb, options);
+				if (mGallery.isAnimated()) {
+					holder.ibGifPlay.setVisibility(View.VISIBLE);
+					Ion.with(holder.ivThumb).load(mGallery.getLink());
+//					holder.ivThumb.setImageDrawable(getResources().getDrawable(
+//							R.drawable.bg_default));
+//					holder.ibGifPlay.setOnClickListener(new OnClickListener() {
+//						
+//						@Override
+//						public void onClick(View v) {
+//							holder.ibGifPlay.setVisibility(View.GONE);
+//							Ion.with(holder.ivThumb).load(mGallery.getLink());
+//						}
+//					});
+				} else {
+					holder.ibGifPlay.setVisibility(View.GONE);
+					imageLoader.displayImage(mGallery.getLink(),
+							holder.ivThumb, options);
+				}
+			} else {
+				holder.ibGifPlay.setVisibility(View.GONE);
+				holder.ivThumb.setImageDrawable(getResources().getDrawable(
+						R.drawable.bg_default));
 			}
 
 			return row;
-		}
-
-		@Override
-		public int getCount() {
-			return galleries.size();
-		}
-
-		@Override
-		public Object getItem(int position) {
-			return galleries.get(position);
-		}
-
-		@Override
-		public long getItemId(int position) {
-			// TODO Auto-generated method stub
-			return 0;
 		}
 
 	}
 
 	static class GalleryHolder {
 		public TextView tvTitle;
-		public RoundedImageView ivThumb;
+		public ImageView ivThumb;
+		public ImageButton ibGifPlay;
 	}
 }

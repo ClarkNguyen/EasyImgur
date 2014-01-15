@@ -1137,8 +1137,10 @@ containing a value of this type.
         public static final int bg_gallery=0x7f020071;
         public static final int drawer_shadow=0x7f020072;
         public static final int ic_drawer=0x7f020073;
-        public static final int ic_launcher=0x7f020074;
-        public static final int list_item_bg_normal=0x7f020075;
+        public static final int ic_gif_play=0x7f020074;
+        public static final int ic_launcher=0x7f020075;
+        public static final int ic_loader=0x7f020076;
+        public static final int list_item_bg_normal=0x7f020077;
     }
     public static final class id {
         public static final int abs__action_bar=0x7f050029;
@@ -1180,12 +1182,13 @@ containing a value of this type.
         public static final int abs__textButton=0x7f05001c;
         public static final int abs__title=0x7f050024;
         public static final int abs__up=0x7f05000f;
-        public static final int action_settings=0x7f050042;
+        public static final int action_settings=0x7f050043;
         public static final int content_frame=0x7f05003c;
         public static final int disableHome=0x7f05000d;
         public static final int drawer_layout=0x7f05003b;
         public static final int edit_query=0x7f05002f;
         public static final int homeAsUp=0x7f05000a;
+        public static final int ibGifPlay=0x7f050042;
         public static final int inside=0x7f050014;
         public static final int ivThumb=0x7f050041;
         public static final int listMode=0x7f050006;
