@@ -11,7 +11,6 @@ import sg.vinova.easy_imgur.base.DataParsingController;
 import sg.vinova.easy_imgur.fragment.base.BaseFragment;
 import sg.vinova.easy_imgur.models.MGallery;
 import sg.vinova.easy_imgur.networking.ImgurAPI;
-import sg.vinova.easy_imgur.utilities.LogUtility;
 import uk.co.senab.actionbarpulltorefresh.extras.actionbarsherlock.PullToRefreshLayout;
 import uk.co.senab.actionbarpulltorefresh.library.ActionBarPullToRefresh;
 import uk.co.senab.actionbarpulltorefresh.library.listeners.OnRefreshListener;
@@ -19,10 +18,11 @@ import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -31,10 +31,9 @@ import android.widget.TextView;
 
 import com.android.volley.Response;
 import com.android.volley.Response.Listener;
-import com.koushikdutta.ion.Ion;
 
 public class GalleriesFragment extends BaseFragment implements
-		OnRefreshListener {
+		OnRefreshListener, OnItemClickListener {
 
 	// TAG
 	public static final String TAG = "GalleriesFragment";
@@ -102,6 +101,7 @@ public class GalleriesFragment extends BaseFragment implements
 				}
 			}
 		});
+		lvGalleries.setOnItemClickListener(this);
 
 		// pull to refresh
 		mPullToRefreshLayout = (PullToRefreshLayout) view
@@ -174,7 +174,9 @@ public class GalleriesFragment extends BaseFragment implements
 			if (!mGallery.isAlbum()) {
 				if (mGallery.isAnimated()) {
 					holder.ibGifPlay.setVisibility(View.VISIBLE);
-					Ion.with(holder.ivThumb).load(mGallery.getLink());
+					holder.ivThumb.setImageDrawable(getResources().getDrawable(
+							R.drawable.bg_default));
+//					Ion.with(holder.ivThumb).load(mGallery.getLink());
 //					holder.ivThumb.setImageDrawable(getResources().getDrawable(
 //							R.drawable.bg_default));
 //					holder.ibGifPlay.setOnClickListener(new OnClickListener() {
@@ -205,5 +207,10 @@ public class GalleriesFragment extends BaseFragment implements
 		public TextView tvTitle;
 		public ImageView ivThumb;
 		public ImageButton ibGifPlay;
+	}
+
+	@Override
+	public void onItemClick(AdapterView<?> parent, View view, int position, long itemId) {
+		switchContent(new GalleriesArticleFragment(galleries.get(position)), true, GalleriesArticleFragment.TAG);
 	}
 }

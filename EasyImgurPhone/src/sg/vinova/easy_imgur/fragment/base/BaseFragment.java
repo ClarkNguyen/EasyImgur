@@ -4,6 +4,7 @@ import sg.vinova.easy_imgur.activity.ContentActivity;
 import sg.vinova.easy_imgur.activity.R;
 import android.content.Context;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 
 import com.actionbarsherlock.app.SherlockFragment;
 import com.android.volley.Response;
@@ -47,6 +48,50 @@ public class BaseFragment extends SherlockFragment {
 			return ((ContentActivity) getActivity()).getErrorListener();
 		}
 		return null;
+	}
+	
+	public void switchContent(Fragment fragment, boolean addToBackstack,
+			boolean clearBackstack) {
+		if (getActivity() == null) {
+			return;
+		}
+		
+		if (getActivity() instanceof ContentActivity) {
+			((ContentActivity) getActivity()).switchContent(fragment, addToBackstack, clearBackstack);
+		}
+	}
+	
+	public void switchContent(Fragment fragment, boolean addToBackstack,
+			String tag) {
+		if (getActivity() == null) {
+			return;
+		}
+		
+		if (getActivity() instanceof ContentActivity) {
+			((ContentActivity) getActivity()).switchContent(fragment, addToBackstack, tag);
+		}
+	}
+	
+	public void switchContent(Fragment fragment, boolean addToBackstack,
+			boolean clearBackstack, String tag) {
+		if (getActivity() == null) {
+			return;
+		}
+		
+		if (getActivity() instanceof ContentActivity) {
+			((ContentActivity) getActivity()).switchContent(fragment, addToBackstack, clearBackstack, tag);
+		}
+	}
+
+	public void switchContent(Fragment fragment, boolean addToBackstack) {
+		if (getActivity() == null) {
+			return;
+		}
+
+		if (getActivity() instanceof ContentActivity) {
+			((ContentActivity) getActivity()).switchContent(fragment,
+					addToBackstack);
+		}
 	}
 
 }
