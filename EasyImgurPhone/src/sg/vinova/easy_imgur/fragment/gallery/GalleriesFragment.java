@@ -11,11 +11,13 @@ import sg.vinova.easy_imgur.base.DataParsingController;
 import sg.vinova.easy_imgur.fragment.base.BaseFragment;
 import sg.vinova.easy_imgur.models.MGallery;
 import sg.vinova.easy_imgur.networking.ImgurAPI;
+import sg.vinova.easy_imgur.widgets.EllipsizingTextView;
 import uk.co.senab.actionbarpulltorefresh.extras.actionbarsherlock.PullToRefreshLayout;
 import uk.co.senab.actionbarpulltorefresh.library.ActionBarPullToRefresh;
 import uk.co.senab.actionbarpulltorefresh.library.listeners.OnRefreshListener;
 import android.content.Context;
 import android.os.Bundle;
+import android.text.format.DateFormat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,11 +31,13 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.actionbarsherlock.app.ActionBar;
+import com.actionbarsherlock.app.ActionBar.OnNavigationListener;
 import com.android.volley.Response;
 import com.android.volley.Response.Listener;
 
 public class GalleriesFragment extends BaseFragment implements
-		OnRefreshListener, OnItemClickListener {
+		OnRefreshListener, OnItemClickListener, OnNavigationListener {
 
 	// TAG
 	public static final String TAG = "GalleriesFragment";
@@ -47,12 +51,20 @@ public class GalleriesFragment extends BaseFragment implements
 	// List adapter
 	private GalleryAdapter adapter;
 
+	// flag check load next page
 	private boolean isMore;
 
+	// pull to refresh layout
 	private PullToRefreshLayout mPullToRefreshLayout;
+
+	// current section
+	private int currSectionPos;
+	private String currSection;
+	private String[] sections;
 
 	public GalleriesFragment() {
 		galleries = new ArrayList<MGallery>();
+		currSection = Constant.PARAM_TYPE_SECTION_HOT;
 	}
 
 	@Override
@@ -108,6 +120,14 @@ public class GalleriesFragment extends BaseFragment implements
 				.findViewById(R.id.ptr_layout);
 		ActionBarPullToRefresh.from(getActivity()).allChildrenArePullable()
 				.listener(this).setup(mPullToRefreshLayout);
+
+		// setup drop down menu section
+		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
+		sections = getResources().getStringArray(R.array.menu_sections);
+		ArrayAdapter<String> aAdpt = new ArrayAdapter<String>(mContext,
+				android.R.layout.simple_list_item_1, android.R.id.text1,
+				sections);
+		actionBar.setListNavigationCallbacks(aAdpt, this);
 	}
 
 	@Override
@@ -117,9 +137,8 @@ public class GalleriesFragment extends BaseFragment implements
 	}
 
 	private void getAllGalleries() {
-		ImgurAPI.getClient().getAllGallery(mContext,
-				Constant.PARAM_TYPE_SECTION_HOT, page, null, null, true,
-				getListener(), getErrorListener());
+		ImgurAPI.getClient().getAllGallery(mContext, currSection, page, null,
+				null, true, getListener(), getErrorListener());
 	}
 
 	private Response.Listener<JSONObject> getListener() {
@@ -160,9 +179,17 @@ public class GalleriesFragment extends BaseFragment implements
 				row = LayoutInflater.from(mContext).inflate(
 						R.layout.row_gallery, parent, false);
 				holder = new GalleryHolder();
-				holder.tvTitle = (TextView) row.findViewById(R.id.tvTitle);
+				holder.tvTitle = (EllipsizingTextView) row
+						.findViewById(R.id.tvTitle);
+				holder.tvTitle.setMaxLines(2);
 				holder.ivThumb = (ImageView) row.findViewById(R.id.ivThumb);
-				holder.ibGifPlay = (ImageButton) row.findViewById(R.id.ibGifPlay);
+				holder.ibGifPlay = (ImageButton) row
+						.findViewById(R.id.ibGifPlay);
+				holder.tvUpCount = (TextView) row.findViewById(R.id.tvUpCount);
+				holder.tvDownCount = (TextView) row
+						.findViewById(R.id.tvDownCount);
+				holder.tvTime = (TextView) row.findViewById(R.id.tvTime);
+				holder.tvScore = (TextView) row.findViewById(R.id.tvScore);
 
 				row.setTag(holder);
 			} else {
@@ -171,22 +198,17 @@ public class GalleriesFragment extends BaseFragment implements
 
 			// fill data to row
 			holder.tvTitle.setText(mGallery.getTitle());
+			holder.tvUpCount.setText(mGallery.getUps() + "");
+			holder.tvDownCount.setText(mGallery.getDowns() + "");
+			holder.tvScore.setText(mGallery.getScore() + "");
+			holder.tvTime.setText(DateFormat.format("MM-dd-yyyy",
+					Long.valueOf(mGallery.getDatetime()) * 1000));
+
 			if (!mGallery.isAlbum()) {
 				if (mGallery.isAnimated()) {
 					holder.ibGifPlay.setVisibility(View.VISIBLE);
-					holder.ivThumb.setImageDrawable(getResources().getDrawable(
-							R.drawable.bg_default));
-//					Ion.with(holder.ivThumb).load(mGallery.getLink());
-//					holder.ivThumb.setImageDrawable(getResources().getDrawable(
-//							R.drawable.bg_default));
-//					holder.ibGifPlay.setOnClickListener(new OnClickListener() {
-//						
-//						@Override
-//						public void onClick(View v) {
-//							holder.ibGifPlay.setVisibility(View.GONE);
-//							Ion.with(holder.ivThumb).load(mGallery.getLink());
-//						}
-//					});
+					imageLoader.displayImage(mGallery.getLink(),
+							holder.ivThumb, options);
 				} else {
 					holder.ibGifPlay.setVisibility(View.GONE);
 					imageLoader.displayImage(mGallery.getLink(),
@@ -204,13 +226,49 @@ public class GalleriesFragment extends BaseFragment implements
 	}
 
 	static class GalleryHolder {
-		public TextView tvTitle;
+		public EllipsizingTextView tvTitle;
 		public ImageView ivThumb;
 		public ImageButton ibGifPlay;
+		public TextView tvUpCount;
+		public TextView tvDownCount;
+		public TextView tvScore;
+		public TextView tvTime;
 	}
 
 	@Override
-	public void onItemClick(AdapterView<?> parent, View view, int position, long itemId) {
-		switchContent(new GalleriesArticleFragment(galleries.get(position)), true, GalleriesArticleFragment.TAG);
+	public void onItemClick(AdapterView<?> parent, View view, int position,
+			long itemId) {
+		switchContent(new GalleriesArticleFragment(galleries.get(position)),
+				true, GalleriesArticleFragment.TAG);
+	}
+
+	@Override
+	public boolean onNavigationItemSelected(int itemPosition, long itemId) {
+		
+		if (itemPosition != currSectionPos) {
+			switch (itemPosition) {
+			case 0:
+				currSectionPos = 0;
+				currSection = Constant.PARAM_TYPE_SECTION_HOT;
+				break;
+
+			case 1:
+				currSectionPos = 1;
+				currSection = Constant.PARAM_TYPE_SECTION_TOP;
+				break;
+
+			case 2:
+				currSectionPos = 2;
+				currSection = Constant.PARAM_TYPE_SECTION_USER;
+				break;
+
+			default:
+				break;
+			}
+			page = 0;
+			getAllGalleries();
+			return true;
+		}
+		return false;
 	}
 }

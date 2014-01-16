@@ -1,16 +1,15 @@
 package sg.vinova.easy_imgur.fragment.base;
 
 import sg.vinova.easy_imgur.activity.ContentActivity;
-import sg.vinova.easy_imgur.activity.R;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 
+import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockFragment;
 import com.android.volley.Response;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
-import com.nostra13.universalimageloader.core.assist.ImageScaleType;
 
 public class BaseFragment extends SherlockFragment {
 
@@ -22,6 +21,9 @@ public class BaseFragment extends SherlockFragment {
 
 	// Paging
 	public int page;
+	
+	// Action bar
+	public ActionBar actionBar;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -32,15 +34,9 @@ public class BaseFragment extends SherlockFragment {
 		// init image loader
 		if (getActivity() != null && getActivity() instanceof ContentActivity) {
 			imageLoader = ((ContentActivity) getActivity()).getImageLoader();
-			// options = ((ContentActivity)
-			// getActivity()).getImageLoaderOptions();
+			options = ((ContentActivity) getActivity()).getImageLoaderOptions();
+			actionBar = ((ContentActivity) getActivity()).getSupportActionBar();
 		}
-		options = new DisplayImageOptions.Builder()
-				.showImageOnLoading(R.drawable.bg_default)
-				.showImageForEmptyUri(R.drawable.bg_default)
-				.showImageOnFail(R.drawable.bg_default)
-				.imageScaleType(ImageScaleType.IN_SAMPLE_INT)
-				.cacheInMemory(true).cacheOnDisc(true).build();
 	}
 
 	public Response.ErrorListener getErrorListener() {
@@ -49,6 +45,10 @@ public class BaseFragment extends SherlockFragment {
 		}
 		return null;
 	}
+	
+	/**********************************
+	 ********* Switch content ********* 
+	 **********************************/
 	
 	public void switchContent(Fragment fragment, boolean addToBackstack,
 			boolean clearBackstack) {

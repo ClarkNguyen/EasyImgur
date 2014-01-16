@@ -39,7 +39,7 @@ public class EasyImgurApplication extends Application {
 				.denyCacheImageMultipleSizesInMemory()
 				.discCacheFileNameGenerator(new Md5FileNameGenerator())
 				.tasksProcessingOrder(QueueProcessingType.LIFO)
-				.threadPoolSize(5).writeDebugLogs() // Remove for release app
+				.threadPoolSize(3).writeDebugLogs() // Remove for release app
 				.build();
 		// Initialize ImageLoader with configuration.
 		ImageLoader.getInstance().init(config);

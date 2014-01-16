@@ -10,7 +10,10 @@
     <ListView
         android:id="@+id/lv_galleries"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" >
+        android:layout_height="match_parent"
+        android:divider="@android:color/transparent"
+        android:fastScrollEnabled="false"
+        android:scrollbars="none" >
     </ListView>
 
 </uk.co.senab.actionbarpulltorefresh.extras.actionbarsherlock.PullToRefreshLayout>

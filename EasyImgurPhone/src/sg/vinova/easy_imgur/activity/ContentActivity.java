@@ -1,7 +1,7 @@
 package sg.vinova.easy_imgur.activity;
 
 import sg.vinova.easy_imgur.fragment.gallery.GalleriesFragment;
-import android.content.Intent;
+import sg.vinova.easy_imgur.fragment.home.HomeFragment;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
@@ -16,21 +16,25 @@ import android.widget.ListView;
 
 import com.actionbarsherlock.view.MenuItem;
 
-public class ContentActivity extends BaseActivity implements OnItemClickListener{
-	
+public class ContentActivity extends BaseActivity implements
+		OnItemClickListener {
+
 	// TAG
 	public static final String TAG = "ContentActivity";
 
 	// Drawer for left menu
 	private ActionBarDrawerToggle drawerToggle;
 	private DrawerLayout drawerLayout;
-	
+
 	// List menu categories
 	private String[] categories;
 	private ListView lvCategories;
 
 	// current action bar title
 	private String currentTitle;
+
+	// current menu position
+	private int currMenuPosition = -1;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -45,9 +49,9 @@ public class ContentActivity extends BaseActivity implements OnItemClickListener
 			mainContent = getSupportFragmentManager().getFragment(
 					savedInstanceState, TAG);
 			setContentForAboveView(mainContent, TAG);
-		} else {
-			this.setPendingMessageIdFromIntent(getIntent());
 		}
+
+		setContentForAboveView(new HomeFragment(), HomeFragment.TAG);
 
 		actionBar.setDisplayHomeAsUpEnabled(true);
 		actionBar.setHomeButtonEnabled(true);
@@ -60,20 +64,23 @@ public class ContentActivity extends BaseActivity implements OnItemClickListener
 		// Connect to UI component
 		lvCategories = (ListView) findViewById(R.id.lv_left_menu);
 		categories = getResources().getStringArray(R.array.menu_categories);
-		lvCategories.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, categories));
+		lvCategories.setAdapter(new ArrayAdapter<String>(this,
+				android.R.layout.simple_list_item_1, categories));
 		lvCategories.setOnItemClickListener(this);
-		
+
 		/**
 		 * Find views for drawer
 		 */
 		drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-		// set a custom shadow that overlays the main content when the drawer opens
-		drawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
-		
+		// set a custom shadow that overlays the main content when the drawer
+		// opens
+		drawerLayout.setDrawerShadow(R.drawable.drawer_shadow,
+				GravityCompat.START);
+
 		drawerToggle = new ActionBarDrawerToggle(this, drawerLayout,
 				R.drawable.ic_drawer, R.string.app_name, R.string.app_name) {
 			public void onDrawerClosed(View view) {
-				actionBar.setTitle(currentTitle);
+				// actionBar.setTitle(currentTitle);
 				// calling onPrepareOptionsMenu() to show action bar icons
 				// invalidateOptionsMenu();
 			}
@@ -92,7 +99,7 @@ public class ContentActivity extends BaseActivity implements OnItemClickListener
 		// TODO Auto-generated method stub
 		return super.onCreateOptionsMenu(menu);
 	}
-	
+
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		if (item.getItemId() == android.R.id.home) {
@@ -107,31 +114,9 @@ public class ContentActivity extends BaseActivity implements OnItemClickListener
 		return super.onOptionsItemSelected(item);
 	}
 
-	/**
-	 * Tries to show a message if the pendingMessageId is set. Clears the
-	 * pendingMessageId after.
-	 */
-	/*
-	 * private void showPendingMessageId() {
-	 * 
-	 * }
-	 */
-
-	/**
-	 * Sets the pending message by looking for an id in the intent's extra with
-	 * key <code>RichPushApplication.MESSAGE_ID_RECEIVED_KEY</code>
-	 * 
-	 * @param intent
-	 *            Intent to look for a rich push message id
-	 */
-	private void setPendingMessageIdFromIntent(Intent intent) {
-		// pendingMessageId =
-		// intent.getStringExtra(SciencesNewsTodayApplication.MESSAGE_ID_RECEIVED_KEY);
-	}
-
 	private void setContentForAboveView(Fragment fragment, String tag) {
 		getSupportFragmentManager().beginTransaction()
-				.replace(R.id.content_frame, mainContent, tag)
+				.replace(R.id.content_frame, fragment, tag)
 				.commitAllowingStateLoss();
 
 	}
@@ -183,23 +168,41 @@ public class ContentActivity extends BaseActivity implements OnItemClickListener
 	}
 
 	@Override
-	public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-		// set actionbar title
-		actionBar.setTitle(categories[position]);
-		
-		switch (position) {
-		case 0:
-			switchContent(new GalleriesFragment(), true, true, GalleriesFragment.TAG);
-			break;
+	public void onItemClick(AdapterView<?> parent, View view, int position,
+			long id) {
 
-		default:
-			break;
+		if (currMenuPosition != position) {
+			// set actionbar title
+			actionBar.setTitle(categories[position]);
+
+			switch (position) {
+			case 0:
+				// galleries
+				currMenuPosition = 0;
+				switchContent(new GalleriesFragment(), true, true,
+						GalleriesFragment.TAG);
+				break;
+				
+			case 1:
+				// albums
+				currMenuPosition = 1;
+				break;
+				
+			case 2:
+				// my photos
+				currMenuPosition = 2;
+				break;
+
+			default:
+				break;
+			}
+
+			lvCategories.setItemChecked(position, true);
 		}
 		
-		lvCategories.setItemChecked(position, true);
 		if (drawerLayout.isDrawerOpen(lvCategories)) {
 			drawerLayout.closeDrawer(lvCategories);
 		}
 	}
-	
+
 }

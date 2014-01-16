@@ -8,30 +8,55 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="12dp"
-        android:background="#CCecc8ff"
+        android:layout_margin="7dp"
+        android:background="@drawable/bg_row_gallery"
         android:orientation="vertical" >
 
-        <TextView
-            android:id="@+id/tvTitle"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="5dp"
-            android:textSize="16sp" />
+            android:layout_marginLeft="12dp"
+            android:layout_marginRight="12dp"
+            android:layout_marginBottom="3dp"
+            android:orientation="vertical" >
+
+            <sg.vinova.easy_imgur.widgets.EllipsizingTextView
+                android:id="@+id/tvTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="3dp"
+                android:maxLines="2"
+                android:textColor="@android:color/black"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/tvTime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawableLeft="@drawable/ic_clock"
+                android:drawablePadding="5dp"
+                android:gravity="center"
+                android:paddingTop="4dp"
+                android:textSize="12sp" />
+        </LinearLayout>
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent" >
+            android:layout_height="wrap_content" >
 
-            <ImageView
+            <com.makeramen.RoundedImageView
                 android:id="@+id/ivThumb"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="170dp"
                 android:layout_centerInParent="true"
-                android:layout_margin="12dp"
-                android:contentDescription="@string/app_name"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
                 android:scaleType="centerCrop"
-                android:src="@drawable/bg_default" />
+                android:src="@drawable/bg_default"
+                app:border_color="#333333"
+                app:border_width="1dp"
+                app:corner_radius="6dp"
+                app:round_background="true" />
 
             <ImageButton
                 android:id="@+id/ibGifPlay"
@@ -43,6 +68,73 @@
                 android:src="@drawable/ic_gif_play"
                 android:visibility="gone" />
         </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp" >
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:gravity="center" >
+
+                <ImageButton
+                    android:id="@+id/ivFavorite"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@android:color/transparent"
+                    android:contentDescription="@string/app_name"
+                    android:src="@drawable/ic_favorite" />
+
+                <TextView
+                    android:id="@+id/tvScore"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="3dp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:gravity="center" >
+
+                <ImageButton
+                    android:id="@+id/ivVoteUp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@android:color/transparent"
+                    android:contentDescription="@string/app_name"
+                    android:src="@drawable/ic_vote_up" />
+
+                <TextView
+                    android:id="@+id/tvUpCount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="3dp"
+                    android:layout_marginRight="6dp" />
+
+                <ImageButton
+                    android:id="@+id/ivVoteDown"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@android:color/transparent"
+                    android:contentDescription="@string/app_name"
+                    android:src="@drawable/ic_vote_down" />
+
+                <TextView
+                    android:id="@+id/tvDownCount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="3dp" />
+            </LinearLayout>
+        </RelativeLayout>
+
     </LinearLayout>
 
 </LinearLayout>
