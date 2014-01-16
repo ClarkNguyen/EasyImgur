@@ -172,6 +172,7 @@ public class GalleriesFragment extends BaseFragment implements
 				holder.tvDownCount = (TextView) row
 						.findViewById(R.id.tvDownCount);
 				holder.tvTime = (TextView) row.findViewById(R.id.tvTime);
+				holder.tvScore = (TextView) row.findViewById(R.id.tvScore);
 
 				row.setTag(holder);
 			} else {
@@ -182,14 +183,14 @@ public class GalleriesFragment extends BaseFragment implements
 			holder.tvTitle.setText(mGallery.getTitle());
 			holder.tvUpCount.setText(mGallery.getUps() + "");
 			holder.tvDownCount.setText(mGallery.getDowns() + "");
+			holder.tvScore.setText(mGallery.getScore() + "");
 			holder.tvTime.setText(DateFormat.format("MM-dd-yyyy",
 					Long.valueOf(mGallery.getDatetime()) * 1000));
 
 			if (!mGallery.isAlbum()) {
 				if (mGallery.isAnimated()) {
 					holder.ibGifPlay.setVisibility(View.VISIBLE);
-					holder.ivThumb.setImageDrawable(getResources().getDrawable(
-							R.drawable.bg_default));
+					imageLoader.displayImage(mGallery.getLink(), holder.ivThumb, options);
 				} else {
 					holder.ibGifPlay.setVisibility(View.GONE);
 					imageLoader.displayImage(mGallery.getLink(),
@@ -212,6 +213,7 @@ public class GalleriesFragment extends BaseFragment implements
 		public ImageButton ibGifPlay;
 		public TextView tvUpCount;
 		public TextView tvDownCount;
+		public TextView tvScore;
 		public TextView tvTime;
 	}
 
