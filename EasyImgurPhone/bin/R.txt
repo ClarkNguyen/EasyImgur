@@ -457,8 +457,16 @@ int string pull_to_refresh_pull_label 0x7f09000e
 int string pull_to_refresh_refreshing_label 0x7f090010
 int string pull_to_refresh_release_label 0x7f09000f
 int string spb_default_speed 0x7f090000
+int style ActionBar_Solid_Example 0x7f0b005f
+int style ActionBar_Transparent_Example 0x7f0b0060
+int style ActionBarTabStyle_Example 0x7f0b0063
+int style ActionButton_CloseMode_Example 0x7f0b0066
 int style AppBaseTheme 0x7f0b005c
 int style AppTheme 0x7f0b005d
+int style DropDownListView_Example 0x7f0b0062
+int style DropDownNav_Example 0x7f0b0064
+int style PopupMenu_Example 0x7f0b0061
+int style ProgressBar_Example 0x7f0b0065
 int style Sherlock___TextAppearance_Small 0x7f0b0048
 int style Sherlock___Theme 0x7f0b0053
 int style Sherlock___Theme_DarkActionBar 0x7f0b0055
@@ -497,6 +505,8 @@ int style TextAppearance_Sherlock_Widget_PopupMenu 0x7f0b0041
 int style TextAppearance_Sherlock_Widget_PopupMenu_Large 0x7f0b0042
 int style TextAppearance_Sherlock_Widget_PopupMenu_Small 0x7f0b0044
 int style TextAppearance_Sherlock_Widget_TextView_SpinnerItem 0x7f0b0046
+int style Theme_Example 0x7f0b005e
+int style Theme_Example_Widget 0x7f0b0067
 int style Theme_Sherlock 0x7f0b0056
 int style Theme_Sherlock_Light 0x7f0b0057
 int style Theme_Sherlock_Light_DarkActionBar 0x7f0b0058

@@ -1349,6 +1349,10 @@ containing a value of this type.
         public static final int spb_default_speed=0x7f090000;
     }
     public static final class style {
+        public static final int ActionBar_Solid_Example=0x7f0b005f;
+        public static final int ActionBar_Transparent_Example=0x7f0b0060;
+        public static final int ActionBarTabStyle_Example=0x7f0b0063;
+        public static final int ActionButton_CloseMode_Example=0x7f0b0066;
         /** 
         Base application theme, dependent on API level. This theme is replaced
         by AppBaseTheme from res/values-vXX/styles.xml on newer devices.
@@ -1375,6 +1379,10 @@ containing a value of this type.
  All customizations that are NOT specific to a particular API-level can go here. 
          */
         public static final int AppTheme=0x7f0b005d;
+        public static final int DropDownListView_Example=0x7f0b0062;
+        public static final int DropDownNav_Example=0x7f0b0064;
+        public static final int PopupMenu_Example=0x7f0b0061;
+        public static final int ProgressBar_Example=0x7f0b0065;
         public static final int Sherlock___TextAppearance_Small=0x7f0b0048;
         public static final int Sherlock___Theme=0x7f0b0053;
         public static final int Sherlock___Theme_DarkActionBar=0x7f0b0055;
@@ -1413,6 +1421,11 @@ containing a value of this type.
         public static final int TextAppearance_Sherlock_Widget_PopupMenu_Large=0x7f0b0042;
         public static final int TextAppearance_Sherlock_Widget_PopupMenu_Small=0x7f0b0044;
         public static final int TextAppearance_Sherlock_Widget_TextView_SpinnerItem=0x7f0b0046;
+        public static final int Theme_Example=0x7f0b005e;
+        /**  this style is only referenced in a Light.DarkActionBar based theme 
+ this style is only referenced in a Light.DarkActionBar based theme 
+         */
+        public static final int Theme_Example_Widget=0x7f0b0067;
         public static final int Theme_Sherlock=0x7f0b0056;
         public static final int Theme_Sherlock_Light=0x7f0b0057;
         public static final int Theme_Sherlock_Light_DarkActionBar=0x7f0b0058;
