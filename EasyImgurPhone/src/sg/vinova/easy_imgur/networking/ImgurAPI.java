@@ -135,4 +135,19 @@ public class ImgurAPI {
 		
 		ImgurAPI.get(getUrl(url), params, listener, errorListener);
 	}
+	
+	/**
+	 * Get detail of a gallery
+	 * @param galleryId
+	 * @param listener
+	 * @param errorListener
+	 */
+	public void getDetailGallery(String galleryId, Response.Listener<JSONObject> listener,
+			Response.ErrorListener errorListener) {
+		String url = getUrl("gallery/") + galleryId;
+		
+		HashMap<String, String> params = new HashMap<String, String>();
+		
+		ImgurAPI.get(url, params, listener, errorListener);
+	}
 }

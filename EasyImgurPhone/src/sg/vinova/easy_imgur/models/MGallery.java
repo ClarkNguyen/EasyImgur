@@ -1,5 +1,7 @@
 package sg.vinova.easy_imgur.models;
 
+import java.util.List;
+
 import com.google.gson.annotations.SerializedName;
 
 public class MGallery {
@@ -66,6 +68,8 @@ public class MGallery {
 	
 	@SerializedName("is_album")
 	private boolean album;
+	
+	private List<MGallery> images;
 
 	public String getId() {
 		return id;
@@ -234,5 +238,12 @@ public class MGallery {
 	public void setAlbum(boolean album) {
 		this.album = album;
 	}
-	
+
+	public List<MGallery> getImages() {
+		return images;
+	}
+
+	public void setImages(List<MGallery> images) {
+		this.images = images;
+	}
 }

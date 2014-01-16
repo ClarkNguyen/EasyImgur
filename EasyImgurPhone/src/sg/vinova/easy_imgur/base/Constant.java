@@ -41,4 +41,13 @@ public class Constant {
 	public static final String PARAM_TYPE_SECTION_USER = "user";
 	public static final String PARAM_TYPE_SORT_VIRAL = "viral";
 	public static final String PARAM_TYPE_SORT_TIME = "time";
+	
+	/**
+	 * TAG data parsing
+	 */
+	public static final String TAG_PARSE_DATA = "data";
+	public static final String TAG_PARSE_IMAGES = "images";
+	
+	public static final String ERROR_PARSE_GALLERY_DETAIL = "parse gallery error";
+	public static final String ERROR_PARSE_LIST_IMAGES = "parse images error";
 }
