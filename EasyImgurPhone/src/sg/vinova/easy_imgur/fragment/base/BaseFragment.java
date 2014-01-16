@@ -5,6 +5,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 
+import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockFragment;
 import com.android.volley.Response;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
@@ -20,6 +21,9 @@ public class BaseFragment extends SherlockFragment {
 
 	// Paging
 	public int page;
+	
+	// Action bar
+	public ActionBar actionBar;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -31,6 +35,7 @@ public class BaseFragment extends SherlockFragment {
 		if (getActivity() != null && getActivity() instanceof ContentActivity) {
 			imageLoader = ((ContentActivity) getActivity()).getImageLoader();
 			options = ((ContentActivity) getActivity()).getImageLoaderOptions();
+			actionBar = ((ContentActivity) getActivity()).getSupportActionBar();
 		}
 	}
 

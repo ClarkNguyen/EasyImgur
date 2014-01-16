@@ -11,5 +11,12 @@
         <item >Albums</item>
         <item >My Photos</item>
     </string-array>
+    
+    <!-- Sections filter in Galleries -->
+    <string-array name="menu_sections">
+        <item >Hot</item>
+        <item >Top</item>
+        <item >User</item>
+    </string-array>
 
 </resources>

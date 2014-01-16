@@ -31,11 +31,13 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.actionbarsherlock.app.ActionBar;
+import com.actionbarsherlock.app.ActionBar.OnNavigationListener;
 import com.android.volley.Response;
 import com.android.volley.Response.Listener;
 
 public class GalleriesFragment extends BaseFragment implements
-		OnRefreshListener, OnItemClickListener {
+		OnRefreshListener, OnItemClickListener, OnNavigationListener {
 
 	// TAG
 	public static final String TAG = "GalleriesFragment";
@@ -49,12 +51,20 @@ public class GalleriesFragment extends BaseFragment implements
 	// List adapter
 	private GalleryAdapter adapter;
 
+	// flag check load next page
 	private boolean isMore;
 
+	// pull to refresh layout
 	private PullToRefreshLayout mPullToRefreshLayout;
+
+	// current section
+	private int currSectionPos;
+	private String currSection;
+	private String[] sections;
 
 	public GalleriesFragment() {
 		galleries = new ArrayList<MGallery>();
+		currSection = Constant.PARAM_TYPE_SECTION_HOT;
 	}
 
 	@Override
@@ -110,6 +120,14 @@ public class GalleriesFragment extends BaseFragment implements
 				.findViewById(R.id.ptr_layout);
 		ActionBarPullToRefresh.from(getActivity()).allChildrenArePullable()
 				.listener(this).setup(mPullToRefreshLayout);
+
+		// setup drop down menu section
+		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
+		sections = getResources().getStringArray(R.array.menu_sections);
+		ArrayAdapter<String> aAdpt = new ArrayAdapter<String>(mContext,
+				android.R.layout.simple_list_item_1, android.R.id.text1,
+				sections);
+		actionBar.setListNavigationCallbacks(aAdpt, this);
 	}
 
 	@Override
@@ -119,9 +137,8 @@ public class GalleriesFragment extends BaseFragment implements
 	}
 
 	private void getAllGalleries() {
-		ImgurAPI.getClient().getAllGallery(mContext,
-				Constant.PARAM_TYPE_SECTION_HOT, page, null, null, true,
-				getListener(), getErrorListener());
+		ImgurAPI.getClient().getAllGallery(mContext, currSection, page, null,
+				null, true, getListener(), getErrorListener());
 	}
 
 	private Response.Listener<JSONObject> getListener() {
@@ -190,7 +207,8 @@ public class GalleriesFragment extends BaseFragment implements
 			if (!mGallery.isAlbum()) {
 				if (mGallery.isAnimated()) {
 					holder.ibGifPlay.setVisibility(View.VISIBLE);
-					imageLoader.displayImage(mGallery.getLink(), holder.ivThumb, options);
+					imageLoader.displayImage(mGallery.getLink(),
+							holder.ivThumb, options);
 				} else {
 					holder.ibGifPlay.setVisibility(View.GONE);
 					imageLoader.displayImage(mGallery.getLink(),
@@ -222,5 +240,35 @@ public class GalleriesFragment extends BaseFragment implements
 			long itemId) {
 		switchContent(new GalleriesArticleFragment(galleries.get(position)),
 				true, GalleriesArticleFragment.TAG);
+	}
+
+	@Override
+	public boolean onNavigationItemSelected(int itemPosition, long itemId) {
+		
+		if (itemPosition != currSectionPos) {
+			switch (itemPosition) {
+			case 0:
+				currSectionPos = 0;
+				currSection = Constant.PARAM_TYPE_SECTION_HOT;
+				break;
+
+			case 1:
+				currSectionPos = 1;
+				currSection = Constant.PARAM_TYPE_SECTION_TOP;
+				break;
+
+			case 2:
+				currSectionPos = 2;
+				currSection = Constant.PARAM_TYPE_SECTION_USER;
+				break;
+
+			default:
+				break;
+			}
+			page = 0;
+			getAllGalleries();
+			return true;
+		}
+		return false;
 	}
 }
