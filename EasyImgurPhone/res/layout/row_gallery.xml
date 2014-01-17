@@ -9,16 +9,16 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="7dp"
-        android:focusable="false"
         android:background="@drawable/bg_row_gallery"
+        android:focusable="false"
         android:orientation="vertical" >
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="3dp"
             android:layout_marginLeft="12dp"
             android:layout_marginRight="12dp"
-            android:layout_marginBottom="3dp"
             android:orientation="vertical" >
 
             <sg.vinova.easy_imgur.widgets.EllipsizingTextView
@@ -66,6 +66,7 @@
                 android:layout_centerInParent="true"
                 android:background="@android:color/transparent"
                 android:contentDescription="@string/app_name"
+                android:focusable="false"
                 android:src="@drawable/ic_gif_play"
                 android:visibility="gone" />
         </RelativeLayout>
@@ -73,10 +74,10 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
             android:layout_marginBottom="5dp"
             android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp" >
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="5dp" >
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -135,7 +136,6 @@
                     android:layout_marginLeft="3dp" />
             </LinearLayout>
         </RelativeLayout>
-
     </LinearLayout>
 
 </LinearLayout>

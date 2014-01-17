@@ -11,7 +11,6 @@ import sg.vinova.easy_imgur.base.DataParsingController;
 import sg.vinova.easy_imgur.fragment.base.BaseFragment;
 import sg.vinova.easy_imgur.models.MGallery;
 import sg.vinova.easy_imgur.networking.ImgurAPI;
-import sg.vinova.easy_imgur.utilities.LogUtility;
 import sg.vinova.easy_imgur.widgets.EllipsizingTextView;
 import uk.co.senab.actionbarpulltorefresh.extras.actionbarsherlock.PullToRefreshLayout;
 import uk.co.senab.actionbarpulltorefresh.library.ActionBarPullToRefresh;
@@ -66,6 +65,7 @@ public class GalleriesFragment extends BaseFragment implements
 	public GalleriesFragment() {
 		galleries = new ArrayList<MGallery>();
 		currSection = Constant.PARAM_TYPE_SECTION_HOT;
+		currSectionPos = 0;
 	}
 
 	@Override
@@ -84,6 +84,12 @@ public class GalleriesFragment extends BaseFragment implements
 		if (galleries.isEmpty()) {
 			getAllGalleries();
 		}
+	}
+	
+	@Override
+	public void onResume() {
+		super.onResume();
+		actionBar.setSelectedNavigationItem(currSectionPos);
 	}
 
 	private void findViews(View view) {
@@ -187,6 +193,7 @@ public class GalleriesFragment extends BaseFragment implements
 				holder.ivThumb = (ImageView) row.findViewById(R.id.ivThumb);
 				holder.ibGifPlay = (ImageButton) row
 						.findViewById(R.id.ibGifPlay);
+				holder.ibGifPlay.setFocusable(false);
 				holder.tvUpCount = (TextView) row.findViewById(R.id.tvUpCount);
 				holder.tvDownCount = (TextView) row
 						.findViewById(R.id.tvDownCount);
@@ -237,10 +244,9 @@ public class GalleriesFragment extends BaseFragment implements
 		public TextView tvTime;
 	}
 
-	@Override
+				
 	public void onItemClick(AdapterView<?> parent, View view, int position, long itemId) {
-		LogUtility.e(TAG, "switch gallery article");
-		switchContent(new GalleriesArticleFragment(galleries.get((int) itemId)),
+		switchContent(new GalleriesArticleFragment(galleries.get(position)),
 				true, GalleriesArticleFragment.TAG);
 	}
 
