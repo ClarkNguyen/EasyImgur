@@ -181,12 +181,12 @@ public class ContentActivity extends BaseActivity implements
 			case 0:
 				// galleries
 				currMenuPosition = 0;
-				/*switchContent(new GalleriesFragment(), true, true,
-						GalleriesFragment.TAG);*/
-				MGallery gallery = new MGallery();
+				switchContent(new GalleriesFragment(), true, true,
+						GalleriesFragment.TAG);
+				/*MGallery gallery = new MGallery();
 				gallery.setId("6uS3m");
 				switchContent(new GalleriesArticleFragment(gallery), true, true,
-						GalleriesFragment.TAG);
+						GalleriesFragment.TAG);*/
 				break;
 				
 			case 1:
