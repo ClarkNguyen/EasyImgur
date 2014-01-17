@@ -4,23 +4,25 @@
     <string name="app_name">Easy Imgur</string>
     <string name="action_settings">Settings</string>
     <string name="hello_world">Hello world!</string>
-    
+
     <!-- Left menu categories -->
     <string-array name="menu_categories">
-        <item >Galleries</item>
-        <item >Albums</item>
-        <item >My Photos</item>
+        <item>Galleries</item>
+        <item>Albums</item>
+        <item>My Photos</item>
+        <item>Login</item>
     </string-array>
-    
+
     <!-- Sections filter in Galleries -->
     <string-array name="menu_sections">
-        <item >Hot</item>
-        <item >Top</item>
-        <item >User</item>
+        <item>Hot</item>
+        <item>Top</item>
+        <item>User</item>
     </string-array>
-    
+
     <string name="text_points">points</string>
     <string name="text_copy_link">Copy link</string>
     <string name="text_copy_direct">Copy direct</string>
+    <string name="loading">Loading</string>
 
 </resources>

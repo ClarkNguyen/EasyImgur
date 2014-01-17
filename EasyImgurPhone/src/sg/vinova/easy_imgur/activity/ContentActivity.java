@@ -1,9 +1,8 @@
 package sg.vinova.easy_imgur.activity;
 
-import sg.vinova.easy_imgur.fragment.gallery.GalleriesArticleFragment;
 import sg.vinova.easy_imgur.fragment.gallery.GalleriesFragment;
 import sg.vinova.easy_imgur.fragment.home.HomeFragment;
-import sg.vinova.easy_imgur.models.MGallery;
+import sg.vinova.easy_imgur.fragment.login.LoginFragment;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
@@ -53,7 +52,7 @@ public class ContentActivity extends BaseActivity implements
 			setContentForAboveView(mainContent, TAG);
 		}
 
-		setContentForAboveView(new HomeFragment(), HomeFragment.TAG);
+		setContentForAboveView(new HomeFragment(), LoginFragment.TAG);
 
 		actionBar.setDisplayHomeAsUpEnabled(true);
 		actionBar.setHomeButtonEnabled(true);
@@ -197,6 +196,12 @@ public class ContentActivity extends BaseActivity implements
 			case 2:
 				// my photos
 				currMenuPosition = 2;
+				break;
+				
+			case 3:
+				// login
+				currMenuPosition = 3;
+				switchContent(new LoginFragment(), true, true, LoginFragment.TAG);
 				break;
 
 			default:

@@ -221,7 +221,7 @@ public class GalleriesArticleFragment extends BaseFragment implements OnClickLis
 	 */
 	private void getDetailForGallery() {
 		if (mGallery != null) {
-			ImgurAPI.getClient().getDetailGallery(mGallery.getId(), getListener(), getErrorListener());
+			ImgurAPI.getClient().getDetailGallery(mContext, mGallery.getId(), getListener(), getErrorListener());
 		}
 	}
 	
