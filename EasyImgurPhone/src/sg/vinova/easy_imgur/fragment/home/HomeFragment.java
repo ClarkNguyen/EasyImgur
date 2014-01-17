@@ -9,7 +9,7 @@ import sg.vinova.easy_imgur.fragment.base.BaseFragment;
 
 public class HomeFragment extends BaseFragment {
 	
-	// Tag
+	// tag 
 	public static final String TAG = "HomeFragment";
 	
 	@Override
@@ -17,19 +17,14 @@ public class HomeFragment extends BaseFragment {
 			Bundle savedInstanceState) {
 		View view = inflater.inflate(R.layout.home_fragment, container, false);
 		
-		findViews(view);
+		finrViews(view);
 		
 		return view;
 	}
 
-	private void findViews(View view) {
+	private void finrViews(View view) {
 		// TODO Auto-generated method stub
 		
 	}
 
-	@Override
-	public void onActivityCreated(Bundle savedInstanceState) {
-		super.onActivityCreated(savedInstanceState);
-		
-	}
 }

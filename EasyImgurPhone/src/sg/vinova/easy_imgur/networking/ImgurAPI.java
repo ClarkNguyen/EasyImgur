@@ -71,7 +71,7 @@ public class ImgurAPI {
 		return url;
 	}
 
-	public static void get(String url, final HashMap<String, String> params,
+	public static void get(final Context mContext, String url, final HashMap<String, String> params,
 			Response.Listener<JSONObject> listener,
 			Response.ErrorListener errorListener) {
 		RequestQueue mRequestQueue = getRequestQueue();
@@ -81,8 +81,8 @@ public class ImgurAPI {
 			public Map<String, String> getHeaders()
 					throws AuthFailureError {
 				HashMap<String, String> params = new HashMap<String, String>();
-				if (!TextUtils.isEmpty(TokenUtility.getToken())) {
-					params.put("Authorization", "Bearer " + TokenUtility.getToken());
+				if (TokenUtility.getUser(mContext) != null && !TextUtils.isEmpty(TokenUtility.getUser(mContext).getAccessToken())) {
+					params.put("Authorization", "Bearer " + TokenUtility.getUser(mContext).getAccessToken());
 				} else {
 					params.put("Authorization", "Client-ID " + Constant.CLIENT_ID);
 				}
@@ -133,7 +133,7 @@ public class ImgurAPI {
 		HashMap<String, String> params = new HashMap<String, String>();
 		params.put(Constant.PARAM_SHOW_VIRAL, String.valueOf(showViral));
 		
-		ImgurAPI.get(getUrl(url), params, listener, errorListener);
+		ImgurAPI.get(mContext, getUrl(url), params, listener, errorListener);
 	}
 	
 	/**
@@ -142,12 +142,12 @@ public class ImgurAPI {
 	 * @param listener
 	 * @param errorListener
 	 */
-	public void getDetailGallery(String galleryId, Response.Listener<JSONObject> listener,
+	public void getDetailGallery(Context mContext, String galleryId, Response.Listener<JSONObject> listener,
 			Response.ErrorListener errorListener) {
 		String url = getUrl("gallery/") + galleryId;
 		
 		HashMap<String, String> params = new HashMap<String, String>();
 		
-		ImgurAPI.get(url, params, listener, errorListener);
+		ImgurAPI.get(mContext, url, params, listener, errorListener);
 	}
 }

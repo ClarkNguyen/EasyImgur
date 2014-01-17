@@ -10,6 +10,11 @@ public class Constant {
 	public static final String CLIENT_SECRET = "880120ee38e14a04e330ba9665f06fed566ed1b3";
 	
 	/**
+	 * Preferences key
+	 */
+	public static final String KEY_USER = "imgur_user";
+	
+	/**
 	 *  Error
 	 */
 	public static final String ERROR = "Error:";
