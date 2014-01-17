@@ -1,118 +1,240 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="#121211"
-    android:orientation="vertical" >
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content" >
 
-    <TextView
-        android:id="@+id/tv_title"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:maxLines="3"
-        android:padding="10dp"
-        android:text="I went to The Doctor today"
-        android:textColor="#ddddd1"
-        android:textSize="22sp"
-        android:textStyle="bold" />
-
-    <LinearLayout
-        android:id="@+id/ll_share"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:background="#6e9c21"
-        android:orientation="horizontal"
-        android:paddingBottom="10dp"
-        android:paddingTop="10dp" >
+        android:layout_height="match_parent"
+        android:background="@android:color/black"
+        android:orientation="vertical" >
 
         <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:padding="10dp" >
+            android:id="@+id/ll_header"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#717473" >
 
-            <ImageView
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_gravity="center"
-                android:contentDescription="@string/app_name"
-                android:src="@drawable/like" />
+            <LinearLayout
+                android:id="@+id/ll_views_count"
+                android:layout_width="60dp"
+                android:layout_height="match_parent"
+                android:background="#b45266"
+                android:gravity="center_vertical"
+                android:orientation="vertical" >
 
-            <TextView
-                android:id="@+id/tv_views_count"
-                android:layout_width="wrap_content"
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:contentDescription="@string/app_name"
+                    android:src="@drawable/eye" />
+
+                <TextView
+                    android:id="@+id/tv_views_count"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:paddingBottom="5dp"
+                    android:text="125334"
+                    android:textColor="@android:color/white"
+                    android:textSize="16sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="2892"
-                android:textColor="@android:color/white"
-                android:textSize="20sp"
-                android:textStyle="bold" />
-        </LinearLayout>
+                android:layout_gravity="center_vertical"
+                android:orientation="vertical" >
 
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:padding="10dp" >
+                <TextView
+                    android:id="@+id/tv_title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:paddingLeft="10dp"
+                    android:paddingTop="10dp"
+                    android:text="Demo title title title title title title title title title title title title title title title title "
+                    android:textColor="@android:color/white"
+                    android:textSize="22dp"
+                    android:textStyle="bold" />
 
-            <ImageView
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_gravity="center"
-                android:contentDescription="@string/app_name"
-                android:src="@drawable/like" />
-
-            <TextView
-                android:id="@+id/tv_scores"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="1,472"
-                android:textColor="@android:color/white"
-                android:textSize="20sp"
-                android:textStyle="bold" />
+                <TextView
+                    android:id="@+id/tv_author"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:paddingBottom="10dp"
+                    android:paddingLeft="10dp"
+                    android:text="By May Thy"
+                    android:textColor="@android:color/white"
+                    android:textSize="16dp" />
+            </LinearLayout>
         </LinearLayout>
 
         <ImageView
-            android:id="@+id/iv_favourite"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:id="@+id/iv_content"
+            android:layout_width="match_parent"
+            android:layout_height="300dp"
+            android:layout_below="@+id/ll_header"
             android:contentDescription="@string/app_name"
-            android:padding="10dp"
-            android:src="@drawable/favourite" />
+            android:scaleType="fitCenter"
+            android:src="@drawable/demo" />
+
+        <RelativeLayout
+            android:id="@+id/ll_social"
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:layout_below="@+id/iv_content"
+            android:background="#6e9c21" >
+
+            <LinearLayout
+                android:id="@+id/ll_views_count"
+                android:layout_width="60dp"
+                android:layout_height="match_parent"
+                android:background="#b45266"
+                android:gravity="center"
+                android:orientation="vertical" >
+
+                <TextView
+                    android:id="@+id/tv_points"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="4,406"
+                    android:textColor="@android:color/white"
+                    android:textSize="18sp" />
+
+                <TextView
+                    android:id="@+id/text_points"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="points"
+                    android:textColor="@android:color/white"
+                    android:textSize="16sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_toLeftOf="@+id/ll_favourite"
+                android:layout_toRightOf="@+id/ll_views_count"
+                android:weightSum="4" >
+
+                <TextView
+                    android:id="@+id/tv_link"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="10dp"
+                    android:layout_weight="3"
+                    android:background="@drawable/bg_link"
+                    android:gravity="center"
+                    android:text="imgur.com/u6S3m"
+                    android:textColor="@android:color/white"
+                    android:textSize="20dp"
+                    android:textStyle="italic" />
+
+                <TextView
+                    android:id="@+id/text_link_copy"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="10dp"
+                    android:layout_weight="1"
+                    android:background="@drawable/bg_link"
+                    android:gravity="center"
+                    android:text="Copy"
+                    android:textColor="@android:color/white"
+                    android:textSize="20dp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/ll_favourite"
+                android:layout_width="60dp"
+                android:layout_height="match_parent"
+                android:layout_alignParentRight="true"
+                android:background="#81D62C" >
+
+                <ImageView
+                    android:id="@+id/iv_favourite"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:contentDescription="@string/app_name"
+                    android:src="@drawable/favourite" />
+            </LinearLayout>
+        </RelativeLayout>
+
+        <LinearLayout
+            android:id="@+id/ll_ups"
+            android:layout_width="60dp"
+            android:layout_height="70dp"
+            android:layout_alignParentRight="true"
+            android:layout_below="@+id/ll_social"
+            android:background="#b45266"
+            android:gravity="center_vertical"
+            android:orientation="vertical" >
+
+            <ImageView
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_gravity="center_horizontal"
+                android:contentDescription="@string/app_name"
+                android:src="@drawable/like" />
+
+            <TextView
+                android:id="@+id/tv_ups"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:paddingTop="5dp"
+                android:text="22535"
+                android:textColor="@android:color/white"
+                android:textSize="18sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/ll_downs"
+            android:layout_width="60dp"
+            android:layout_height="70dp"
+            android:layout_alignParentRight="true"
+            android:layout_below="@+id/ll_ups"
+            android:background="#ce8593"
+            android:gravity="center_vertical"
+            android:orientation="vertical" >
+
+            <ImageView
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_gravity="center_horizontal"
+                android:contentDescription="@string/app_name"
+                android:src="@drawable/like" />
+
+            <TextView
+                android:id="@+id/tv_downs"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:paddingTop="5dp"
+                android:text="22535"
+                android:textColor="@android:color/white"
+                android:textSize="18sp" />
+        </LinearLayout>
 
         <TextView
-            android:id="@+id/tv_point"
-            android:layout_width="wrap_content"
+            android:id="@+id/tv_description"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/ll_downs"
+            android:layout_alignTop="@+id/ll_ups"
+            android:layout_toLeftOf="@+id/ll_ups"
+            android:background="#717473"
+            android:paddingBottom="30dp"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:paddingTop="10dp"
+            android:text="Demo description Demo description Demo description Demo description Demo description Demo description Demo description Demo description "
             android:textColor="@android:color/white"
-            android:textSize="30dp"
-            android:textStyle="bold"
-            android:text="2810 points"
-            android:layout_gravity="center_vertical" />
-    </LinearLayout>
+            android:textSize="16dp" />
+    </RelativeLayout>
 
-    <TextView
-        android:id="@+id/tv_description"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/ll_share"
-        android:layout_alignParentLeft="true"
-        android:maxLines="3"
-        android:padding="10dp"
-        android:text="The little sign on the counter says you will obey and wash your hands. I was thoroughly amused."
-        android:textColor="#ddddd1"
-        android:textSize="16sp" />
-
-    <ImageView
-        android:id="@+id/iv_content"
-        android:layout_width="match_parent"
-        android:layout_height="280dp"
-        android:layout_above="@+id/tv_description"
-        android:layout_alignParentLeft="true"
-        android:contentDescription="@string/app_name"
-        android:scaleType="fitCenter"
-        android:src="@drawable/demo" />
-
-</RelativeLayout>
+</ScrollView>
