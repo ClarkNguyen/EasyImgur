@@ -238,10 +238,9 @@ public class GalleriesFragment extends BaseFragment implements
 	}
 
 	@Override
-	public void onItemClick(AdapterView<?> parent, View view, int position,
-			long itemId) {
+	public void onItemClick(AdapterView<?> parent, View view, int position, long itemId) {
 		LogUtility.e(TAG, "switch gallery article");
-		switchContent(new GalleriesArticleFragment(galleries.get(position)),
+		switchContent(new GalleriesArticleFragment(galleries.get((int) itemId)),
 				true, GalleriesArticleFragment.TAG);
 	}
 

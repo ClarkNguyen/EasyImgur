@@ -18,5 +18,9 @@
         <item >Top</item>
         <item >User</item>
     </string-array>
+    
+    <string name="text_points">points</string>
+    <string name="text_copy_link">Copy link</string>
+    <string name="text_copy_direct">Copy direct</string>
 
 </resources>
