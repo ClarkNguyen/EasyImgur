@@ -11,6 +11,7 @@ import sg.vinova.easy_imgur.base.DataParsingController;
 import sg.vinova.easy_imgur.fragment.base.BaseFragment;
 import sg.vinova.easy_imgur.models.MGallery;
 import sg.vinova.easy_imgur.networking.ImgurAPI;
+import sg.vinova.easy_imgur.utilities.LogUtility;
 import sg.vinova.easy_imgur.widgets.EllipsizingTextView;
 import uk.co.senab.actionbarpulltorefresh.extras.actionbarsherlock.PullToRefreshLayout;
 import uk.co.senab.actionbarpulltorefresh.library.ActionBarPullToRefresh;
@@ -90,6 +91,8 @@ public class GalleriesFragment extends BaseFragment implements
 		lvGalleries = (ListView) view.findViewById(R.id.lv_galleries);
 		adapter = new GalleryAdapter(mContext, R.layout.row_gallery, galleries);
 		lvGalleries.setAdapter(adapter);
+		
+		lvGalleries.setOnItemClickListener(this);
 
 		lvGalleries.setOnScrollListener(new OnScrollListener() {
 
@@ -113,7 +116,6 @@ public class GalleriesFragment extends BaseFragment implements
 				}
 			}
 		});
-		lvGalleries.setOnItemClickListener(this);
 
 		// pull to refresh
 		mPullToRefreshLayout = (PullToRefreshLayout) view
@@ -238,6 +240,7 @@ public class GalleriesFragment extends BaseFragment implements
 	@Override
 	public void onItemClick(AdapterView<?> parent, View view, int position,
 			long itemId) {
+		LogUtility.e(TAG, "switch gallery article");
 		switchContent(new GalleriesArticleFragment(galleries.get(position)),
 				true, GalleriesArticleFragment.TAG);
 	}
