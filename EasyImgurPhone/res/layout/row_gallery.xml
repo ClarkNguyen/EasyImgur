@@ -9,6 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="7dp"
+        android:focusable="false"
         android:background="@drawable/bg_row_gallery"
         android:orientation="vertical" >
 
@@ -83,7 +84,7 @@
                 android:layout_alignParentRight="true"
                 android:gravity="center" >
 
-                <ImageButton
+                <ImageView
                     android:id="@+id/ivFavorite"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -104,7 +105,7 @@
                 android:layout_alignParentLeft="true"
                 android:gravity="center" >
 
-                <ImageButton
+                <ImageView
                     android:id="@+id/ivVoteUp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -119,7 +120,7 @@
                     android:layout_marginLeft="3dp"
                     android:layout_marginRight="6dp" />
 
-                <ImageButton
+                <ImageView
                     android:id="@+id/ivVoteDown"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
