@@ -1,7 +1,9 @@
 package sg.vinova.easy_imgur.activity;
 
+import sg.vinova.easy_imgur.fragment.gallery.GalleriesArticleFragment;
 import sg.vinova.easy_imgur.fragment.gallery.GalleriesFragment;
 import sg.vinova.easy_imgur.fragment.home.HomeFragment;
+import sg.vinova.easy_imgur.models.MGallery;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
@@ -181,6 +183,10 @@ public class ContentActivity extends BaseActivity implements
 				currMenuPosition = 0;
 				switchContent(new GalleriesFragment(), true, true,
 						GalleriesFragment.TAG);
+				/*MGallery gallery = new MGallery();
+				gallery.setId("6uS3m");
+				switchContent(new GalleriesArticleFragment(gallery), true, true,
+						GalleriesFragment.TAG);*/
 				break;
 				
 			case 1:
