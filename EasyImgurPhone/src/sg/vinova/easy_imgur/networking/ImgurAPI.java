@@ -85,10 +85,11 @@ public class ImgurAPI {
 				HashMap<String, String> params = new HashMap<String, String>();
 				if (TokenUtility.getUser(mContext) != null && !TextUtils.isEmpty(TokenUtility.getUser(mContext).getAccessToken())) {
 					params.put("Authorization", "Bearer " + TokenUtility.getUser(mContext).getAccessToken());
+					LogUtility.e(TAG, "Bearer " + TokenUtility.getUser(mContext).getAccessToken());
 				} else {
 					params.put("Authorization", "Client-ID " + Constant.CLIENT_ID);
+					LogUtility.e(TAG, "Client-ID " + Constant.CLIENT_ID);
 				}
-//				params.put("Authorization", "Bearer " + "31b3ea149fc787f8ba93a482fb501b7f0c75fb4f");
 				return params;
 			}
 		};
