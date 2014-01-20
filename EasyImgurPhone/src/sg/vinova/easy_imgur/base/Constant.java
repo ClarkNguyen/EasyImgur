@@ -37,6 +37,10 @@ public class Constant {
 	public static final String PARAM_PER_PAGE = "perPage";
 	public static final String PARAM_WINDOW = "window";				// Change the date range of the request if the section is "top", day | week | month | year | all, defaults to day
 	public static final String PARAM_SHOW_VIRAL = "showViral";		// true | false - Show or hide viral images from the 'user' section. Defaults to true
+	public static final String PARAM_REFRESH_TOKEN = "refresh_token";
+	public static final String PARAM_CLIENT_ID = "client_id";
+	public static final String PARAM_CLIENT_SECRET = "client_secret";
+	public static final String PARAM_GRANT_TYPE = "grant_type";
 	
 	/**
 	 * Params type
@@ -46,6 +50,7 @@ public class Constant {
 	public static final String PARAM_TYPE_SECTION_USER = "user";
 	public static final String PARAM_TYPE_SORT_VIRAL = "viral";
 	public static final String PARAM_TYPE_SORT_TIME = "time";
+	public static final String PARAM_TYPE_REFRESH_TOKEN = "refresh_token";
 	
 	/**
 	 * TAG data parsing

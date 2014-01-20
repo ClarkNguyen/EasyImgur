@@ -1,6 +1,7 @@
 package sg.vinova.easy_imgur.fragment.base;
 
 import sg.vinova.easy_imgur.activity.ContentActivity;
+import sg.vinova.easy_imgur.interfaces.TokenHandle;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -39,9 +40,9 @@ public class BaseFragment extends SherlockFragment {
 		}
 	}
 
-	public Response.ErrorListener getErrorListener() {
+	public Response.ErrorListener getErrorListener(TokenHandle tokenHandle) {
 		if (getActivity() != null && getActivity() instanceof ContentActivity) {
-			return ((ContentActivity) getActivity()).getErrorListener();
+			return ((ContentActivity) getActivity()).getErrorListener(tokenHandle);
 		}
 		return null;
 	}

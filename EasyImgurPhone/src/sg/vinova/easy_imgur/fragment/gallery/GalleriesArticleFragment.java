@@ -8,6 +8,7 @@ import org.json.JSONObject;
 import sg.vinova.easy_imgur.activity.R;
 import sg.vinova.easy_imgur.base.DataParsingController;
 import sg.vinova.easy_imgur.fragment.base.BaseFragment;
+import sg.vinova.easy_imgur.interfaces.TokenHandle;
 import sg.vinova.easy_imgur.models.MGallery;
 import sg.vinova.easy_imgur.networking.ImgurAPI;
 import sg.vinova.easy_imgur.utilities.StringUtility;
@@ -221,7 +222,19 @@ public class GalleriesArticleFragment extends BaseFragment implements OnClickLis
 	 */
 	private void getDetailForGallery() {
 		if (mGallery != null) {
-			ImgurAPI.getClient().getDetailGallery(mContext, mGallery.getId(), getListener(), getErrorListener());
+			ImgurAPI.getClient().getDetailGallery(mContext, mGallery.getId(), getListener(), getErrorListener(new TokenHandle() {
+				
+				@Override
+				public void onRefreshSuccess() {
+					getDetailForGallery();
+				}
+				
+				@Override
+				public void onRefreshFailed() {
+					// TODO Auto-generated method stub
+					
+				}
+			}));
 		}
 	}
 	
