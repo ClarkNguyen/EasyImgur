@@ -111,6 +111,29 @@ public class ImgurAPI {
 		LogUtility.e(TAG, "post url: " + url);
 	}
 	
+	public static void post(final Context mContext, String url, final HashMap<String, String> params,
+			Response.Listener<JSONObject> listener,
+			Response.ErrorListener errorListener) {
+		RequestQueue mRequestQueue = getRequestQueue();
+		JsonObjectRequest jsonRequest = new JsonObjectRequest(Method.POST,
+				generateFullUrl(url, params), null, listener, errorListener){
+			@Override
+			public Map<String, String> getHeaders()
+					throws AuthFailureError {
+				HashMap<String, String> params = new HashMap<String, String>();
+				if (TokenUtility.getUser(mContext) != null && !TextUtils.isEmpty(TokenUtility.getUser(mContext).getAccessToken())) {
+					params.put("Authorization", "Bearer " + TokenUtility.getUser(mContext).getAccessToken());
+					LogUtility.e(TAG, "Bearer " + TokenUtility.getUser(mContext).getAccessToken());
+				} else {
+					params.put("Authorization", "Client-ID " + Constant.CLIENT_ID);
+					LogUtility.e(TAG, "Client-ID " + Constant.CLIENT_ID);
+				}
+		        return params;
+			}
+		};
+		mRequestQueue.add(jsonRequest);
+	}
+	
 	/**********************
 	 ******* GALLERY ******
 	 **********************/
@@ -136,7 +159,7 @@ public class ImgurAPI {
 		ImgurAPI.get(mContext, getUrl(url), params, listener, errorListener);
 	}
 	
-	/**
+	/**	
 	 * Get detail of a gallery
 	 * @param galleryId
 	 * @param listener
@@ -149,5 +172,37 @@ public class ImgurAPI {
 		HashMap<String, String> params = new HashMap<String, String>();
 		
 		ImgurAPI.get(mContext, url, params, listener, errorListener);
+	}
+	
+	/**
+	 * Favorite an album
+	 * @param mContext
+	 * @param galleryId
+	 * @param listener
+	 * @param errorListener
+	 */
+	public void favoriteAlbum(Context mContext, String galleryId, Response.Listener<JSONObject> listener,
+			Response.ErrorListener errorListener) {
+		String url = getUrl("album/") + galleryId + "/favorite";
+		
+		HashMap<String, String> params = new HashMap<String, String>();
+		
+		ImgurAPI.post(mContext, url, params, listener, errorListener);
+	}
+	
+	/**
+	 * Favorite an image
+	 * @param mContext
+	 * @param galleryId
+	 * @param listener
+	 * @param errorListener
+	 */
+	public void favoriteImage(Context mContext, String galleryId, Response.Listener<JSONObject> listener,
+			Response.ErrorListener errorListener) {
+		String url = getUrl("image/") + galleryId + "/favorite";
+		
+		HashMap<String, String> params = new HashMap<String, String>();
+		
+		ImgurAPI.post(mContext, url, params, listener, errorListener);
 	}
 }

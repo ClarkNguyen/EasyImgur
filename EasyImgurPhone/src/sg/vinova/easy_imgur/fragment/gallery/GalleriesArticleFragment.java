@@ -3,6 +3,7 @@ package sg.vinova.easy_imgur.fragment.gallery;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import sg.vinova.easy_imgur.activity.R;
@@ -15,6 +16,8 @@ import sg.vinova.easy_imgur.utilities.TextRefineUtil;
 import sg.vinova.easy_imgur.widgets.HackyViewPageScrollView;
 import sg.vinova.easy_imgur.widgets.ViewImagePopupWindow;
 import android.annotation.SuppressLint;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Parcelable;
@@ -30,11 +33,15 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.Response;
+import com.android.volley.Response.ErrorListener;
 import com.android.volley.Response.Listener;
+import com.android.volley.VolleyError;
+import com.koushikdutta.ion.Ion;
 
-@SuppressLint("ValidFragment")
+@SuppressLint({ "ValidFragment", "NewApi" })
 public class GalleriesArticleFragment extends BaseFragment implements OnClickListener {
 	
 	// TAG
@@ -67,6 +74,8 @@ public class GalleriesArticleFragment extends BaseFragment implements OnClickLis
 	private TextView tvDowns;
 	
 	private TextView tvDescription;
+	
+	private String shortLink;
 	
 	public GalleriesArticleFragment(MGallery mGallery) {
 		this.mGallery = mGallery;
@@ -121,7 +130,7 @@ public class GalleriesArticleFragment extends BaseFragment implements OnClickLis
 			
 			listImages = new ArrayList<MGallery>();
 
-			getDetailForGallery();
+			//getDetailForGallery();
 			
 			pagerContent.setOnPageChangeListener(new OnPageChangeListener() {
 				
@@ -188,7 +197,11 @@ public class GalleriesArticleFragment extends BaseFragment implements OnClickLis
 		 * Image content
 		 */
 		if (!mGallery.isAlbum()) {
-			imageLoader.displayImage(mGallery.getLink(), ivContent, options);
+			if (mGallery.isAnimated()) {
+				Ion.with(ivContent).load(mGallery.getLink());
+			} else {
+				imageLoader.displayImage(mGallery.getLink(), ivContent, options);	
+			}
 		} else {
 			// TODO is album
 		}
@@ -197,12 +210,18 @@ public class GalleriesArticleFragment extends BaseFragment implements OnClickLis
 		 * Info
 		 */
 		tvPoints.setText(mGallery.getScore()+"");
-		String shortLink = TextRefineUtil.refineString(mGallery.getLink());
+		shortLink = TextRefineUtil.refineString(mGallery.getLink());
 		shortLink = StringUtility.removeString("http://", shortLink);
 		shortLink = StringUtility.removeString(".jpg", shortLink);
 		shortLink = StringUtility.removeString(".png", shortLink);
 		shortLink = StringUtility.removeString(".gif", shortLink);
 		tvLink.setText(shortLink);
+		
+		if (mGallery.isFavorite()) {
+			ivFavourite.setImageResource(R.drawable.ic_favorite_true);
+		} else {
+			ivFavourite.setImageResource(R.drawable.ic_favorite_false);
+		}
 		
 		/**
 		 * Voting
@@ -251,7 +270,101 @@ public class GalleriesArticleFragment extends BaseFragment implements OnClickLis
 	public void onClick(View v) {
 		if (v == ivContent) {
 			showFullImage(mGallery.getLink());
+		} else if (v == textLinkDetail) {
+			setClipboard("link", shortLink);
+		} else if (v == textLinkDirect) {
+			setClipboard("direct", mGallery.getLink());
+		} else if (v == ivFavourite) {
+			toggleFavorite();
+			
+			if (mGallery.isAlbum()) {
+				ImgurAPI.getClient().favoriteAlbum(mContext, mGallery.getId(), new Listener<JSONObject>() {
+
+					@Override
+					public void onResponse(JSONObject arg0) {
+						handleOnFavoriteSuccess("album", arg0);
+					}
+				}, new ErrorListener() {
+
+					@Override
+					public void onErrorResponse(VolleyError arg0) {
+						toggleFavorite();
+						Toast.makeText(mContext, "Got something wrong, please try again.", Toast.LENGTH_SHORT).show();
+					}
+				});	
+			} else {
+				ImgurAPI.getClient().favoriteImage(mContext, mGallery.getId(), new Listener<JSONObject>() {
+
+					@Override
+					public void onResponse(JSONObject arg0) {
+						handleOnFavoriteSuccess("image", arg0);
+					}
+				}, new ErrorListener() {
+
+					@Override
+					public void onErrorResponse(VolleyError arg0) {
+						toggleFavorite();
+						Toast.makeText(mContext, "Got something wrong, please try again.", Toast.LENGTH_SHORT).show();
+					}
+				});
+			}
 		}
+	}
+	
+	/**
+	 * Toggle the favorite button
+	 */
+	private void toggleFavorite() {
+		if (mGallery.isFavorite()) {
+			mGallery.setFavorite(false);
+			ivFavourite.setImageResource(R.drawable.ic_favorite_false);
+		} else {
+			mGallery.setFavorite(true);
+			ivFavourite.setImageResource(R.drawable.ic_favorite_true);
+		}
+	}
+	
+	/**
+	 * On favorite success
+	 * @param type
+	 * @param arg0
+	 */
+	private void handleOnFavoriteSuccess(String type, JSONObject arg0) {
+		boolean success;
+		String isFavorite;
+		try {
+			success = arg0.getBoolean("success");
+			isFavorite = arg0.getString("data");
+			if (success) {
+				if (isFavorite.equals("favorited")) {
+					Toast.makeText(mContext, "You added an " + type + " to favorite.", Toast.LENGTH_SHORT).show();
+				} else {
+					Toast.makeText(mContext, "You removed an " + type + " from favorite.", Toast.LENGTH_SHORT).show();
+				}
+			}
+		} catch (JSONException e) {
+			toggleFavorite();
+			Toast.makeText(mContext, "Got something wrong, please try again.", Toast.LENGTH_SHORT).show();
+			e.printStackTrace();
+		}
+	}
+	
+	/**
+	 * Set a text to clipboard
+	 */
+	@SuppressWarnings("deprecation")
+	private void setClipboard(String tag, String text) {
+		int sdk = android.os.Build.VERSION.SDK_INT;
+		if (sdk < android.os.Build.VERSION_CODES.HONEYCOMB) {
+            android.text.ClipboardManager clipboard = (android.text.ClipboardManager)
+            		getSherlockActivity().getSystemService(Context.CLIPBOARD_SERVICE);
+            clipboard.setText(text);
+		} else {
+			ClipboardManager clipboard = (ClipboardManager) getSherlockActivity().getSystemService(Context.CLIPBOARD_SERVICE); 
+			ClipData clip = ClipData.newPlainText(tag, text);
+			clipboard.setPrimaryClip(clip);
+		}
+		Toast.makeText(mContext, text + " copied.", Toast.LENGTH_SHORT).show();
 	}
 	
 	/**
