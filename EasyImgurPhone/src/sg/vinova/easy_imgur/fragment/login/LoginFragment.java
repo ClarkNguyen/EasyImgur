@@ -3,6 +3,7 @@ package sg.vinova.easy_imgur.fragment.login;
 import sg.vinova.easy_imgur.activity.R;
 import sg.vinova.easy_imgur.base.Constant;
 import sg.vinova.easy_imgur.fragment.base.BaseFragment;
+import sg.vinova.easy_imgur.fragment.home.HomeFragment;
 import sg.vinova.easy_imgur.models.MUser;
 import sg.vinova.easy_imgur.utilities.LogUtility;
 import sg.vinova.easy_imgur.utilities.TokenUtility;
@@ -83,6 +84,7 @@ public class LoginFragment extends BaseFragment {
 						}
 						LogUtility.e(TAG, "MUser: " + gson.toJson(mUser));
 						TokenUtility.saveUser(mContext, gson.toJson(mUser));
+						switchContent(new HomeFragment(), false, true, HomeFragment.TAG);
 					}
 				} else if (!TextUtils.isEmpty(uri.getQueryParameter("error"))) {
 					// TODO process if click deny permission

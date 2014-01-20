@@ -1,7 +1,13 @@
 package sg.vinova.easy_imgur.activity;
 
+import org.json.JSONObject;
+
 import sg.vinova.easy_imgur.base.Constant;
+import sg.vinova.easy_imgur.interfaces.TokenHandle;
+import sg.vinova.easy_imgur.models.MUser;
+import sg.vinova.easy_imgur.networking.ImgurAPI;
 import sg.vinova.easy_imgur.utilities.LogUtility;
+import sg.vinova.easy_imgur.utilities.TokenUtility;
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -14,6 +20,7 @@ import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Window;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.google.gson.Gson;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.ImageScaleType;
@@ -90,13 +97,50 @@ public class BaseActivity extends SherlockFragmentActivity {
 	 * Listener for error response
 	 * @return
 	 */
-	public Response.ErrorListener getErrorListener() {
+	public Response.ErrorListener getErrorListener(final TokenHandle tokenHandle) {
 		return new Response.ErrorListener() {
 
 			@Override
-			public void onErrorResponse(VolleyError arg0) {
+			public void onErrorResponse(VolleyError err) {
 				showProgressBar(false);
-				handleOnError(arg0);
+				if (err.networkResponse.statusCode == 403) {
+					// handle refresh token
+					ImgurAPI.getClient().getNewToken(BaseActivity.this, new Response.Listener<JSONObject>() {
+
+						@Override
+						public void onResponse(JSONObject json) {
+							LogUtility.e(TAG, "RefreshToken: " + json.toString());
+							if (json != null) {
+								if (tokenHandle != null) {
+									try {
+										MUser mUser = TokenUtility.getUser(BaseActivity.this);
+										mUser.setAccessToken(json.getString("access_token"));
+										mUser.setExpires(json.getInt("expires_in"));
+										mUser.setRefreshToken(json.getString("refresh_token"));
+										mUser.setUserName(json.getString("account_username"));
+										mUser.setTokenType(json.getString("token_type"));
+										
+										TokenUtility.saveUser(BaseActivity.this, new Gson().toJson(mUser));
+										tokenHandle.onRefreshSuccess();
+									} catch (Exception e) {
+										LogUtility.e(TAG, "Parse token error");
+									}
+								}
+							}
+						}
+					}, new Response.ErrorListener() {
+
+						@Override
+						public void onErrorResponse(VolleyError err) {
+							LogUtility.e(TAG, "RefreshTokenError: " + err.networkResponse.statusCode);
+							if (tokenHandle != null) {
+								tokenHandle.onRefreshFailed();
+							}
+						}
+					});
+				} else {
+					handleOnError(err);
+				}
 			}
 		};
 	}
@@ -104,9 +148,9 @@ public class BaseActivity extends SherlockFragmentActivity {
 	/**
 	 * Handle attitude on request data got error
 	 */
-	public void handleOnError(VolleyError arg0) {
-		String message = arg0.toString();
-		LogUtility.e(TAG, Constant.ERROR+message);
+	public void handleOnError(VolleyError err) {
+		String message = err.toString();
+		LogUtility.e(TAG, Constant.ERROR + message);
 		if (message.contains(Constant.MESSAGE_NETWORK_UNREACHABLE)) {
 			Toast.makeText(getBaseContext(), Constant.MESSAGE_NETWORK_UNREACHABLE, Toast.LENGTH_SHORT).show();
 		} else if (message.contains(Constant.REQUEST_TIMEOUT)) {

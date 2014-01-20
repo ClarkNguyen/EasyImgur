@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import sg.vinova.easy_imgur.base.Constant;
@@ -32,6 +33,7 @@ public class ImgurAPI {
 
 	// Imgur API url
 	private static final String imgurClientUrl = "https://api.imgur.com/3";
+	private static final String oauthUrl = "https://api.imgur.com/oauth2/token";
 
 	private String url;
 
@@ -71,22 +73,23 @@ public class ImgurAPI {
 		return url;
 	}
 
-	public static void get(final Context mContext, String url, final HashMap<String, String> params,
+	public static void get(final Context mContext, String url,
+			final HashMap<String, String> params,
 			Response.Listener<JSONObject> listener,
 			Response.ErrorListener errorListener) {
 		RequestQueue mRequestQueue = getRequestQueue();
 		JsonObjectRequest jsonRequest = new JsonObjectRequest(Method.GET,
-				generateFullUrl(url, params), null, listener, errorListener){
+				generateFullUrl(url, params), null, listener, errorListener) {
 			@Override
-			public Map<String, String> getHeaders()
-					throws AuthFailureError {
+			public Map<String, String> getHeaders() throws AuthFailureError {
 				HashMap<String, String> params = new HashMap<String, String>();
 				if (TokenUtility.getUser(mContext) != null && !TextUtils.isEmpty(TokenUtility.getUser(mContext).getAccessToken())) {
 					params.put("Authorization", "Bearer " + TokenUtility.getUser(mContext).getAccessToken());
 				} else {
 					params.put("Authorization", "Client-ID " + Constant.CLIENT_ID);
 				}
-		        return params;
+//				params.put("Authorization", "Bearer " + "31b3ea149fc787f8ba93a482fb501b7f0c75fb4f");
+				return params;
 			}
 		};
 		mRequestQueue.add(jsonRequest);
@@ -97,7 +100,8 @@ public class ImgurAPI {
 			Response.Listener<JSONArray> listener,
 			Response.ErrorListener errorListener) {
 		RequestQueue mRequestQueue = getRequestQueue();
-		JsonArrayRequest jsonRequest = new JsonArrayRequest(generateFullUrl(url, params), listener, errorListener);
+		JsonArrayRequest jsonRequest = new JsonArrayRequest(generateFullUrl(
+				url, params), listener, errorListener);
 		mRequestQueue.add(jsonRequest);
 	}
 
@@ -133,44 +137,71 @@ public class ImgurAPI {
 		};
 		mRequestQueue.add(jsonRequest);
 	}
-	
+
+	/**********************
+	 ******* USER *********
+	 **********************/
+
+	public void getNewToken(Context mContext,
+			Response.Listener<JSONObject> listener,
+			Response.ErrorListener errorListener) {
+
+		JSONObject params = new JSONObject();
+		try {
+			params.put(Constant.PARAM_CLIENT_ID, Constant.CLIENT_ID);
+			params.put(Constant.PARAM_CLIENT_SECRET, Constant.CLIENT_SECRET);
+			params.put(Constant.PARAM_GRANT_TYPE, Constant.PARAM_TYPE_REFRESH_TOKEN);
+			params.put(Constant.PARAM_REFRESH_TOKEN, TokenUtility.getUser(mContext).getRefreshToken());
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		ImgurAPI.post(oauthUrl, params, listener, errorListener);
+	}
+
 	/**********************
 	 ******* GALLERY ******
 	 **********************/
-	
-	public void getAllGallery(Context mContext, String section, int page, 
+
+	public void getAllGallery(Context mContext, String section, int page,
 			String sort, String window, boolean showViral,
 			Response.Listener<JSONObject> listener,
-			Response.ErrorListener errorListener){
+			Response.ErrorListener errorListener) {
 		String url = "gallery/";
 		url += section + "/";
-		
+
 		if (!TextUtils.isEmpty(sort)) {
-			url += sort +"/";
+			url += sort + "/";
 		}
-		if (section.equalsIgnoreCase(Constant.PARAM_TYPE_SECTION_TOP) && !TextUtils.isEmpty(window)) {
+		if (section.equalsIgnoreCase(Constant.PARAM_TYPE_SECTION_TOP)
+				&& !TextUtils.isEmpty(window)) {
 			url += window + "/";
 		}
 		url += page;
-		
+
 		HashMap<String, String> params = new HashMap<String, String>();
 		params.put(Constant.PARAM_SHOW_VIRAL, String.valueOf(showViral));
-		
+
 		ImgurAPI.get(mContext, getUrl(url), params, listener, errorListener);
 	}
 	
 	/**	
+=======
+
+	/**
+>>>>>>> 365b32beabd8df14f8233820c5e522ae2597bb52
 	 * Get detail of a gallery
+	 * 
 	 * @param galleryId
 	 * @param listener
 	 * @param errorListener
 	 */
-	public void getDetailGallery(Context mContext, String galleryId, Response.Listener<JSONObject> listener,
+	public void getDetailGallery(Context mContext, String galleryId,
+			Response.Listener<JSONObject> listener,
 			Response.ErrorListener errorListener) {
 		String url = getUrl("gallery/") + galleryId;
-		
+
 		HashMap<String, String> params = new HashMap<String, String>();
-		
+
 		ImgurAPI.get(mContext, url, params, listener, errorListener);
 	}
 	

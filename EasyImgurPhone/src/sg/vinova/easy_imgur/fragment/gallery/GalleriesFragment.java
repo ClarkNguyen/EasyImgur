@@ -9,8 +9,10 @@ import sg.vinova.easy_imgur.activity.R;
 import sg.vinova.easy_imgur.base.Constant;
 import sg.vinova.easy_imgur.base.DataParsingController;
 import sg.vinova.easy_imgur.fragment.base.BaseFragment;
+import sg.vinova.easy_imgur.interfaces.TokenHandle;
 import sg.vinova.easy_imgur.models.MGallery;
 import sg.vinova.easy_imgur.networking.ImgurAPI;
+import sg.vinova.easy_imgur.utilities.LogUtility;
 import sg.vinova.easy_imgur.widgets.EllipsizingTextView;
 import uk.co.senab.actionbarpulltorefresh.extras.actionbarsherlock.PullToRefreshLayout;
 import uk.co.senab.actionbarpulltorefresh.library.ActionBarPullToRefresh;
@@ -146,7 +148,20 @@ public class GalleriesFragment extends BaseFragment implements
 
 	private void getAllGalleries() {
 		ImgurAPI.getClient().getAllGallery(mContext, currSection, page, null,
-				null, true, getListener(), getErrorListener());
+				null, true, getListener(), getErrorListener(new TokenHandle() {
+					
+					@Override
+					public void onRefreshSuccess() {
+						LogUtility.e(TAG, "Get data after refresh");
+						getAllGalleries();
+					}
+					
+					@Override
+					public void onRefreshFailed() {
+						// TODO Auto-generated method stub
+						
+					}
+				}));
 	}
 
 	private Response.Listener<JSONObject> getListener() {

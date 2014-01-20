@@ -17,12 +17,12 @@ public class HomeFragment extends BaseFragment {
 			Bundle savedInstanceState) {
 		View view = inflater.inflate(R.layout.home_fragment, container, false);
 		
-		finrViews(view);
+		findViews(view);
 		
 		return view;
 	}
 
-	private void finrViews(View view) {
+	private void findViews(View view) {
 		// TODO Auto-generated method stub
 		
 	}
