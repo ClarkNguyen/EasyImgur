@@ -903,14 +903,16 @@ containing a value of this type.
         public static final int abs__bright_foreground_disabled_holo_light=0x7f070005;
         public static final int abs__bright_foreground_holo_dark=0x7f070002;
         public static final int abs__bright_foreground_holo_light=0x7f070003;
-        public static final int abs__primary_text_disable_only_holo_dark=0x7f07000c;
-        public static final int abs__primary_text_disable_only_holo_light=0x7f07000d;
-        public static final int abs__primary_text_holo_dark=0x7f07000e;
-        public static final int abs__primary_text_holo_light=0x7f07000f;
+        public static final int abs__primary_text_disable_only_holo_dark=0x7f07000e;
+        public static final int abs__primary_text_disable_only_holo_light=0x7f07000f;
+        public static final int abs__primary_text_holo_dark=0x7f070010;
+        public static final int abs__primary_text_holo_light=0x7f070011;
         public static final int default_progress_bar_color=0x7f070007;
         public static final int list_background=0x7f070008;
         public static final int list_background_pressed=0x7f070009;
         public static final int spb_default_color=0x7f070006;
+        public static final int text_link_negative=0x7f07000c;
+        public static final int text_link_positive=0x7f07000d;
         public static final int title_article_detail=0x7f07000a;
         public static final int title_category=0x7f07000b;
     }
@@ -1162,8 +1164,8 @@ containing a value of this type.
         public static final int ic_clock=0x7f020087;
         public static final int ic_drawer=0x7f020088;
         public static final int ic_favorite=0x7f020089;
-        public static final int ic_favorite_false=0x7f02008a;
-        public static final int ic_favorite_true=0x7f02008b;
+        public static final int ic_favorite_negative=0x7f02008a;
+        public static final int ic_favorite_positive=0x7f02008b;
         public static final int ic_gif_play=0x7f02008c;
         public static final int ic_laucher=0x7f02008d;
         public static final int ic_launcher=0x7f02008e;

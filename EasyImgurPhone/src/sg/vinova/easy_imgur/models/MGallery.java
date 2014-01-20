@@ -70,6 +70,8 @@ public class MGallery {
 	private boolean album;
 	
 	private List<MGallery> images;
+	
+	private boolean isExplored;
 
 	public String getId() {
 		return id;
@@ -245,5 +247,13 @@ public class MGallery {
 
 	public void setImages(List<MGallery> images) {
 		this.images = images;
+	}
+
+	public boolean isExplored() {
+		return isExplored;
+	}
+
+	public void setExplored(boolean isExplored) {
+		this.isExplored = isExplored;
 	}
 }

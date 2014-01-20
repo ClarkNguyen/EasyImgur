@@ -74,9 +74,15 @@ public class GalleriesArticleFragment extends BaseFragment implements OnClickLis
 	
 	private TextView tvDescription;
 	
+	private RelativeLayout.LayoutParams mLayoutParams;
+	
 	private String shortLink;
 	
-	RelativeLayout.LayoutParams mLayoutParams;
+	// Vlag for check if user is viewing detail of album
+	private boolean isExploreDetail = false;
+	
+	// Value to hold current album's image
+	private int currentImage = 0;
 	
 	public GalleriesArticleFragment(MGallery mGallery) {
 		this.mGallery = mGallery;
@@ -134,7 +140,7 @@ public class GalleriesArticleFragment extends BaseFragment implements OnClickLis
 		// If gallery is an image
 		if (!mGallery.isAlbum()) {
 			ivContent.setOnClickListener(this);
-			if (mGallery.getHeight() != 0) {
+			if (mGallery.isAnimated() && mGallery.getHeight() != 0) {
 				ivContent.getLayoutParams().height = mGallery.getHeight();
 			}
 			
@@ -207,9 +213,13 @@ public class GalleriesArticleFragment extends BaseFragment implements OnClickLis
 		tvLink.setText(shortLink);
 		
 		if (mGallery.isFavorite()) {
-			ivFavourite.setImageResource(R.drawable.ic_favorite_true);
+			ivFavourite.setImageResource(R.drawable.ic_favorite_positive);
 		} else {
-			ivFavourite.setImageResource(R.drawable.ic_favorite_false);
+			ivFavourite.setImageResource(R.drawable.ic_favorite_negative);
+		}
+		
+		if (mGallery.isAlbum() && !isExploreDetail) {
+			toggleDirectLink();
 		}
 		
 		/**
@@ -247,9 +257,9 @@ public class GalleriesArticleFragment extends BaseFragment implements OnClickLis
 		tvLink.setText(shortLink);
 		
 		if (image.isFavorite()) {
-			ivFavourite.setImageResource(R.drawable.ic_favorite_true);
+			ivFavourite.setImageResource(R.drawable.ic_favorite_positive);
 		} else {
-			ivFavourite.setImageResource(R.drawable.ic_favorite_false);
+			ivFavourite.setImageResource(R.drawable.ic_favorite_negative);
 		}
 	}
 	
@@ -267,10 +277,35 @@ public class GalleriesArticleFragment extends BaseFragment implements OnClickLis
 				
 				@Override
 				public void onRefreshFailed() {
-					// TODO Auto-generated method stub
-					
 				}
 			}));
+		}
+	}
+	
+	/**
+	 * Get detail content for an image
+	 * @param imageId
+	 */
+	private void getDetailForImage(final MGallery image) {
+		if (!image.isExplored()) {
+			ivFavourite.setClickable(false);
+			ImgurAPI.getClient().getDetailImage(mContext, image.getId(), getListener(), getErrorListener(new TokenHandle() {
+				
+				@Override
+				public void onRefreshSuccess() {
+					getDetailForImage(image);
+				}
+				
+				@Override
+				public void onRefreshFailed() {	
+				}
+			}));
+		} else {
+			if (image.isFavorite()) {
+				ivFavourite.setImageResource(R.drawable.ic_favorite_positive);
+			} else {
+				ivFavourite.setImageResource(R.drawable.ic_favorite_negative);
+			}
 		}
 	}
 	
@@ -284,9 +319,18 @@ public class GalleriesArticleFragment extends BaseFragment implements OnClickLis
 			@Override
 			public void onResponse(JSONObject json) {
 				MGallery gallery = DataParsingController.parseGallery(json);
-				mGallery.setImages(gallery.getImages());
-				
-				fillViews();
+				if (!isExploreDetail) {
+					mGallery.setImages(gallery.getImages());
+					fillViews();
+				} else {
+					mGallery.getImages().get(currentImage).setFavorite(gallery.isFavorite());
+					ivFavourite.setClickable(true);
+					if (gallery.isFavorite()) {
+						ivFavourite.setImageResource(R.drawable.ic_favorite_positive);
+					} else {
+						ivFavourite.setImageResource(R.drawable.ic_favorite_negative);
+					}
+				}
 			}
 		};
 	}
@@ -300,16 +344,27 @@ public class GalleriesArticleFragment extends BaseFragment implements OnClickLis
 			setClipboard("link", shortLink);
 			
 		} else if (v == textLinkDirect) {
-			setClipboard("direct", mGallery.getLink());
+			if (!isExploreDetail){
+				setClipboard("direct", mGallery.getLink());
+			} else {
+				setClipboard("direct", mGallery.getImages().get(currentImage).getLink());
+			}
 			
 		} else if (v == ivFavourite) {
 			toggleFavorite();
 			if (mGallery.isAlbum()) {
-				postFavoriteAlbum();
+				if (!isExploreDetail) {
+					postFavoriteAlbum();
+				} else {
+					postFavoriteImage(mGallery.getImages().get(currentImage).getId());
+				}
 			} else {
-				postFavoriteImage();
+				postFavoriteImage(mGallery.getId());
 			}
 		} else if (v == textDetailGallery) {
+			isExploreDetail = true;
+			toggleDirectLink();
+			
 			textDetailGallery.setVisibility(View.GONE);
 			ivContent.setVisibility(View.GONE);
 			pagerContent.setVisibility(View.VISIBLE);
@@ -320,7 +375,9 @@ public class GalleriesArticleFragment extends BaseFragment implements OnClickLis
 			lp.addRule(RelativeLayout.BELOW, R.id.pager_content);
 			rlSocial.setLayoutParams(lp);
 			
+			getDetailForImage(mGallery.getImages().get(0));
 			fillImageDetail(mGallery.getImages().get(0));
+			mGallery.getImages().get(0).setExplored(true);
 			
 			pagerContent.setOnPageChangeListener(new OnPageChangeListener() {
 				
@@ -328,20 +385,19 @@ public class GalleriesArticleFragment extends BaseFragment implements OnClickLis
 				public void onPageSelected(int arg0) {
 					/*MGallery image = listImages.get(arg0);
 					pagerContent.getLayoutParams().height = image.getHeight();*/
+					currentImage = arg0;
+					getDetailForImage(mGallery.getImages().get(arg0));
 					fillImageDetail(mGallery.getImages().get(arg0));
-					LogUtility.e(TAG, arg0);
+					mGallery.getImages().get(arg0).setExplored(true);
+					LogUtility.e(TAG, mGallery.getImages().get(arg0).isExplored());
 				}
 				
 				@Override
 				public void onPageScrolled(int arg0, float arg1, int arg2) {
-					// TODO Auto-generated method stub
-					
 				}
 				
 				@Override
 				public void onPageScrollStateChanged(int arg0) {
-					// TODO Auto-generated method stub
-					
 				}
 			});
 			
@@ -378,8 +434,8 @@ public class GalleriesArticleFragment extends BaseFragment implements OnClickLis
 	/**
 	 * Send a favorite request to specified image
 	 */
-	private void postFavoriteImage() {
-		ImgurAPI.getClient().favoriteImage(mContext, mGallery.getId(), new Listener<JSONObject>() {
+	private void postFavoriteImage(final String imageId) {
+		ImgurAPI.getClient().favoriteImage(mContext, imageId, new Listener<JSONObject>() {
 
 			@Override
 			public void onResponse(JSONObject arg0) {
@@ -389,7 +445,7 @@ public class GalleriesArticleFragment extends BaseFragment implements OnClickLis
 			
 			@Override
 			public void onRefreshSuccess() {
-				postFavoriteImage();
+				postFavoriteImage(imageId);
 			}
 			
 			@Override
@@ -404,12 +460,35 @@ public class GalleriesArticleFragment extends BaseFragment implements OnClickLis
 	 * Toggle the favorite button
 	 */
 	private void toggleFavorite() {
-		if (mGallery.isFavorite()) {
-			mGallery.setFavorite(false);
-			ivFavourite.setImageResource(R.drawable.ic_favorite_false);
+		if (!isExploreDetail) {
+			if (mGallery.isFavorite()) {
+				mGallery.setFavorite(false);
+				ivFavourite.setImageResource(R.drawable.ic_favorite_negative);
+			} else {
+				mGallery.setFavorite(true);
+				ivFavourite.setImageResource(R.drawable.ic_favorite_positive);
+			}
 		} else {
-			mGallery.setFavorite(true);
-			ivFavourite.setImageResource(R.drawable.ic_favorite_true);
+			if (mGallery.getImages().get(currentImage).isFavorite()) {
+				mGallery.getImages().get(currentImage).setFavorite(false);
+				ivFavourite.setImageResource(R.drawable.ic_favorite_negative);
+			} else {
+				mGallery.getImages().get(currentImage).setFavorite(true);
+				ivFavourite.setImageResource(R.drawable.ic_favorite_positive);
+			}
+		}
+	}
+	
+	/**
+	 * Toggle direct link
+	 */
+	private void toggleDirectLink() {
+		if (!isExploreDetail) {
+			textLinkDirect.setClickable(false);
+			textLinkDirect.setTextColor(getResources().getColor(R.color.text_link_negative));
+		} else {
+			textLinkDirect.setClickable(true);
+			textLinkDirect.setTextColor(getResources().getColor(R.color.text_link_positive));
 		}
 	}
 	

@@ -207,6 +207,23 @@ public class ImgurAPI {
 	}
 	
 	/**
+	 * Get detail of an image
+	 * 
+	 * @param imageId
+	 * @param listener
+	 * @param errorListener
+	 */
+	public void getDetailImage(Context mContext, String imageId,
+			Response.Listener<JSONObject> listener,
+			Response.ErrorListener errorListener) {
+		String url = getUrl("image/") + imageId;
+
+		HashMap<String, String> params = new HashMap<String, String>();
+
+		ImgurAPI.get(mContext, url, params, listener, errorListener);
+	}
+	
+	/**
 	 * Favorite an album
 	 * @param mContext
 	 * @param galleryId
