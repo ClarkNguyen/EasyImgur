@@ -71,6 +71,8 @@ public class GalleriesArticleFragment extends BaseFragment implements OnClickLis
 	private LinearLayout llDowns;
 	private TextView tvUps;
 	private TextView tvDowns;
+	private ImageView ivUps;
+	private ImageView ivDowns;
 	
 	private TextView tvDescription;
 	
@@ -172,6 +174,8 @@ public class GalleriesArticleFragment extends BaseFragment implements OnClickLis
 		llDowns = (LinearLayout) view.findViewById(R.id.ll_downs);
 		tvUps = (TextView) view.findViewById(R.id.tv_ups);
 		tvDowns = (TextView) view.findViewById(R.id.tv_downs);
+		ivUps = (ImageView) view.findViewById(R.id.iv_ups);
+		ivDowns = (ImageView) view.findViewById(R.id.iv_downs);
 		llUps.setOnClickListener(this);
 		llDowns.setOnClickListener(this);
 		
@@ -227,6 +231,14 @@ public class GalleriesArticleFragment extends BaseFragment implements OnClickLis
 		 */
 		tvUps.setText(mGallery.getUps()+"");
 		tvDowns.setText(mGallery.getDowns()+"");
+		
+		if (mGallery.getVote() != null) {
+			if (mGallery.getVote().equals("up")) {
+				ivUps.setImageResource(R.drawable.ic_ups_positive);
+			} else if (mGallery.getVote().equals("down") || mGallery.getVote().equals("veto")) {
+				ivDowns.setImageResource(R.drawable.ic_downs_positive);
+			}
+		}
 		
 		/**
 		 * Description
@@ -403,7 +415,54 @@ public class GalleriesArticleFragment extends BaseFragment implements OnClickLis
 			
 			listImageAdapter = new ListImagesAdapter(mGallery.getImages());
 			pagerContent.setAdapter(listImageAdapter);
+		} else if (v == llUps) {
+			if (mGallery.getVote() != null) {
+				if (mGallery.getVote().equals("up")) {
+					Toast.makeText(mContext, "You had already voted up!", Toast.LENGTH_SHORT).show();
+				} else {
+					toggleVote(true);
+				}
+			} else {
+				toggleVote(true);
+			}
+
+		} else if (v == llDowns) {
+			if (mGallery.getVote() != null) {
+				if (mGallery.getVote().equals("down")) {
+					Toast.makeText(mContext, "You had already voted down!", Toast.LENGTH_SHORT).show();
+				} else {
+					toggleVote(false);
+				}
+			} else {
+				toggleVote(false);
+			}
 		}
+	}
+	
+	/**
+	 * Send a voting request to specified gallery
+	 * @param galleryId
+	 * @param isUp
+	 */
+	private void postVoteGallery(final String galleryId, final boolean isUp) {
+		ImgurAPI.getClient().voteGallery(mContext, galleryId, isUp, new Listener<JSONObject>() {
+
+			@Override
+			public void onResponse(JSONObject jsonObj) {
+				handleOnVoteSuccess(isUp, "gallery", jsonObj);
+			}
+		}, getErrorListener(new TokenHandle() {
+			
+			@Override
+			public void onRefreshSuccess() {
+				postVoteGallery(galleryId, isUp);
+			}
+			
+			@Override
+			public void onRefreshFailed() {
+				Toast.makeText(mContext, "Got something wrong, please try again.", Toast.LENGTH_SHORT).show();
+			}
+		}));
 	}
 	
 	/**
@@ -480,6 +539,25 @@ public class GalleriesArticleFragment extends BaseFragment implements OnClickLis
 	}
 	
 	/**
+	 * Toggle vote buttons
+	 */
+	private void toggleVote(boolean isUp) {
+		String vote;
+		if (isUp) {
+			vote = "up";
+			ivUps.setImageResource(R.drawable.ic_ups_positive);
+			ivDowns.setImageResource(R.drawable.ic_downs_negative);
+		} else {
+			vote = "down";
+			ivUps.setImageResource(R.drawable.ic_ups_negative);
+			ivDowns.setImageResource(R.drawable.ic_downs_positive);
+		}
+		
+		mGallery.setVote(vote);
+		postVoteGallery(mGallery.getId(), isUp);
+	}
+	
+	/**
 	 * Toggle direct link
 	 */
 	private void toggleDirectLink() {
@@ -495,15 +573,15 @@ public class GalleriesArticleFragment extends BaseFragment implements OnClickLis
 	/**
 	 * On favorite success
 	 * @param type
-	 * @param arg0
+	 * @param json
 	 */
-	private void handleOnFavoriteSuccess(String type, JSONObject arg0) {
-		boolean success;
+	private void handleOnFavoriteSuccess(String type, JSONObject json) {
+		boolean isSuccess;
 		String isFavorite;
 		try {
-			success = arg0.getBoolean("success");
-			isFavorite = arg0.getString("data");
-			if (success) {
+			isSuccess = json.getBoolean("success");
+			isFavorite = json.getString("data");
+			if (isSuccess) {
 				if (isFavorite.equals("favorited")) {
 					Toast.makeText(mContext, "You added an " + type + " to favorite.", Toast.LENGTH_SHORT).show();
 				} else {
@@ -513,6 +591,29 @@ public class GalleriesArticleFragment extends BaseFragment implements OnClickLis
 		} catch (JSONException e) {
 			toggleFavorite();
 			Toast.makeText(mContext, "Got something wrong, please try again.", Toast.LENGTH_SHORT).show();
+			e.printStackTrace();
+		}
+	}
+	
+	/**
+	 * On vote success
+	 * @param isUp
+	 * @param type
+	 * @param json
+	 */
+	private void handleOnVoteSuccess(boolean isUp, String type, JSONObject json) {
+		boolean isSuccess;
+		try {
+			isSuccess = json.getBoolean("success");
+			if (isSuccess) {
+				if (isUp) {
+					Toast.makeText(mContext, "You voted up an " + type + ".", Toast.LENGTH_SHORT).show();
+				} else {
+					Toast.makeText(mContext, "You voted down an " + type + ".", Toast.LENGTH_SHORT).show();
+				}
+			}
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
