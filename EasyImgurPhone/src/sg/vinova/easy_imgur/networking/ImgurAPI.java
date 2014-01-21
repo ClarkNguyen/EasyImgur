@@ -294,4 +294,24 @@ public class ImgurAPI {
 
 		ImgurAPI.post(mContext, url, params, listener, errorListener);
 	}
+	
+	/**
+	 * Vote an gallery object
+	 * @param mContext
+	 * @param galleryId
+	 * @param isUp
+	 * @param listener
+	 * @param errorListener
+	 */
+	public void voteGallery(Context mContext, String galleryId, boolean isUp, Response.Listener<JSONObject> listener,
+			Response.ErrorListener errorListener) {
+		String vote;
+		if (isUp) vote = "up";
+		else vote = "down";
+		String url = getUrl("gallery/") + galleryId + "/vote/" + vote;
+		
+		HashMap<String, String> params = new HashMap<String, String>();
+		
+		ImgurAPI.post(mContext, url, params, listener, errorListener);
+	}
 }

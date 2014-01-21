@@ -215,11 +215,12 @@
                 android:orientation="vertical" >
 
                 <ImageView
+                    android:id="@+id/iv_ups"
                     android:layout_width="30dp"
                     android:layout_height="30dp"
                     android:layout_gravity="center_horizontal"
                     android:contentDescription="@string/app_name"
-                    android:src="@drawable/ic_vote_up" />
+                    android:src="@drawable/ic_ups_negative" />
 
                 <TextView
                     android:id="@+id/tv_ups"
@@ -242,11 +243,12 @@
                 android:orientation="vertical" >
 
                 <ImageView
+                    android:id="@+id/iv_downs"
                     android:layout_width="30dp"
                     android:layout_height="30dp"
                     android:layout_gravity="center_horizontal"
                     android:contentDescription="@string/app_name"
-                    android:src="@drawable/ic_vote_down" />
+                    android:src="@drawable/ic_downs_negative" />
 
                 <TextView
                     android:id="@+id/tv_downs"
