@@ -12,6 +12,7 @@ import sg.vinova.easy_imgur.fragment.base.BaseFragment;
 import sg.vinova.easy_imgur.interfaces.TokenHandle;
 import sg.vinova.easy_imgur.models.MGallery;
 import sg.vinova.easy_imgur.networking.ImgurAPI;
+import sg.vinova.easy_imgur.utilities.LogUtility;
 import sg.vinova.easy_imgur.utilities.StringUtility;
 import sg.vinova.easy_imgur.utilities.TextRefineUtil;
 import sg.vinova.easy_imgur.widgets.HackyViewPageScrollView;
@@ -37,14 +38,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Response;
-import com.android.volley.Response.ErrorListener;
 import com.android.volley.Response.Listener;
-import com.android.volley.VolleyError;
 import com.koushikdutta.ion.Ion;
 
 @SuppressLint({ "ValidFragment", "NewApi" })
 public class GalleriesArticleFragment extends BaseFragment implements OnClickListener {
-	
 	// TAG
 	public static final String TAG = "GalleriesArticleFragment";
 
@@ -59,8 +57,8 @@ public class GalleriesArticleFragment extends BaseFragment implements OnClickLis
 	
 	private ImageView ivContent;
 	private HackyViewPageScrollView pagerContent;
-	private List<MGallery> listImages;
 	private ListImagesAdapter listImageAdapter;
+	private TextView textDetailGallery;
 	
 	private RelativeLayout rlSocial;
 	private TextView tvPoints;
@@ -76,7 +74,15 @@ public class GalleriesArticleFragment extends BaseFragment implements OnClickLis
 	
 	private TextView tvDescription;
 	
+	private RelativeLayout.LayoutParams mLayoutParams;
+	
 	private String shortLink;
+	
+	// Vlag for check if user is viewing detail of album
+	private boolean isExploreDetail = false;
+	
+	// Value to hold current album's image
+	private int currentImage = 0;
 	
 	public GalleriesArticleFragment(MGallery mGallery) {
 		this.mGallery = mGallery;
@@ -87,11 +93,26 @@ public class GalleriesArticleFragment extends BaseFragment implements OnClickLis
 			Bundle savedInstanceState) {
 		// Settings
 		View view = inflater.inflate(R.layout.fragment_detail, container, false);
+		mLayoutParams = new RelativeLayout.LayoutParams(
+				ViewGroup.LayoutParams.WRAP_CONTENT,
+		        ViewGroup.LayoutParams.WRAP_CONTENT);
 		findViews(view);
 		
-		fillViews();
-		
 		return view;
+	}
+	
+	@Override
+	public void onResume() {
+		super.onResume();
+		
+		// Get detail for gallery
+		if ((mGallery.getImages() == null || mGallery.getImages().size() == 0) && mGallery.isAlbum()) {
+			List<MGallery> listImages = new ArrayList<MGallery>();
+			mGallery.setImages(listImages);
+			getDetailForGallery();
+		} else {
+			fillViews();
+		}
 	}
 	
 	/**
@@ -109,50 +130,27 @@ public class GalleriesArticleFragment extends BaseFragment implements OnClickLis
 		 * Image content
 		 */
 		rlSocial = (RelativeLayout) view.findViewById(R.id.rl_social);
-		RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(
-				ViewGroup.LayoutParams.WRAP_CONTENT,
-		        ViewGroup.LayoutParams.WRAP_CONTENT);
-		
 		ivContent = (ImageView) view.findViewById(R.id.iv_content);
 		pagerContent = (HackyViewPageScrollView) view.findViewById(R.id.pager_content);
+		textDetailGallery = (TextView) view.findViewById(R.id.text_detail_gallery);
+		
+		mLayoutParams.addRule(RelativeLayout.BELOW, R.id.iv_content);
+		rlSocial.setLayoutParams(mLayoutParams);
+		
+		// If gallery is an image
 		if (!mGallery.isAlbum()) {
-			ivContent.setVisibility(View.VISIBLE);
-			lp.addRule(RelativeLayout.BELOW, R.id.iv_content);
-			rlSocial.setLayoutParams(lp);
-			
 			ivContent.setOnClickListener(this);
-			if (mGallery.getHeight() != 0) {
+			if (mGallery.isAnimated() && mGallery.getHeight() != 0) {
 				ivContent.getLayoutParams().height = mGallery.getHeight();
 			}
+			
+		// It's an album else
 		} else {
-			pagerContent.setVisibility(View.VISIBLE);
-			lp.addRule(RelativeLayout.BELOW, R.id.pager_content);
-			rlSocial.setLayoutParams(lp);
-			
-			listImages = new ArrayList<MGallery>();
-
-			//getDetailForGallery();
-			
-			pagerContent.setOnPageChangeListener(new OnPageChangeListener() {
-				
-				@Override
-				public void onPageSelected(int arg0) {
-					MGallery image = listImages.get(arg0);
-					pagerContent.getLayoutParams().height = image.getHeight();
-				}
-				
-				@Override
-				public void onPageScrolled(int arg0, float arg1, int arg2) {
-					// TODO Auto-generated method stub
-					
-				}
-				
-				@Override
-				public void onPageScrollStateChanged(int arg0) {
-					// TODO Auto-generated method stub
-					
-				}
-			});
+			ivContent.getLayoutParams().height = 450;
+			ivContent.setVisibility(View.VISIBLE);
+			textDetailGallery.setVisibility(View.VISIBLE);
+			pagerContent.setVisibility(View.GONE);
+			textDetailGallery.setOnClickListener(this);
 		}
 		
 		/**
@@ -204,24 +202,24 @@ public class GalleriesArticleFragment extends BaseFragment implements OnClickLis
 				imageLoader.displayImage(mGallery.getLink(), ivContent, options);	
 			}
 		} else {
-			// TODO is album
+			imageLoader.displayImage(mGallery.getImages().get(0).getLink(), ivContent, options);	
 		}
 		
 		/**
 		 * Info
 		 */
 		tvPoints.setText(mGallery.getScore()+"");
-		shortLink = TextRefineUtil.refineString(mGallery.getLink());
-		shortLink = StringUtility.removeString("http://", shortLink);
-		shortLink = StringUtility.removeString(".jpg", shortLink);
-		shortLink = StringUtility.removeString(".png", shortLink);
-		shortLink = StringUtility.removeString(".gif", shortLink);
+		handleLink(mGallery.getLink());
 		tvLink.setText(shortLink);
 		
 		if (mGallery.isFavorite()) {
-			ivFavourite.setImageResource(R.drawable.ic_favorite_true);
+			ivFavourite.setImageResource(R.drawable.ic_favorite_positive);
 		} else {
-			ivFavourite.setImageResource(R.drawable.ic_favorite_false);
+			ivFavourite.setImageResource(R.drawable.ic_favorite_negative);
+		}
+		
+		if (mGallery.isAlbum() && !isExploreDetail) {
+			toggleDirectLink();
 		}
 		
 		/**
@@ -234,6 +232,35 @@ public class GalleriesArticleFragment extends BaseFragment implements OnClickLis
 		 * Description
 		 */
 		tvDescription.setText(TextRefineUtil.refineString(mGallery.getDescription()));
+	}
+	
+	/**
+	 * handle link
+	 */
+	private void handleLink(String link) {
+		shortLink = TextRefineUtil.refineString(link);
+		shortLink = StringUtility.removeString("http://", shortLink);
+		shortLink = StringUtility.removeString(".jpg", shortLink);
+		shortLink = StringUtility.removeString(".png", shortLink);
+		shortLink = StringUtility.removeString(".gif", shortLink);
+	}
+	
+	/**
+	 * Fill the detail of an image
+	 * @param imageId
+	 */
+	private void fillImageDetail(MGallery image) {
+		/**
+		 * Info
+		 */
+		handleLink(image.getLink());
+		tvLink.setText(shortLink);
+		
+		if (image.isFavorite()) {
+			ivFavourite.setImageResource(R.drawable.ic_favorite_positive);
+		} else {
+			ivFavourite.setImageResource(R.drawable.ic_favorite_negative);
+		}
 	}
 	
 	/**
@@ -250,10 +277,35 @@ public class GalleriesArticleFragment extends BaseFragment implements OnClickLis
 				
 				@Override
 				public void onRefreshFailed() {
-					// TODO Auto-generated method stub
-					
 				}
 			}));
+		}
+	}
+	
+	/**
+	 * Get detail content for an image
+	 * @param imageId
+	 */
+	private void getDetailForImage(final MGallery image) {
+		if (!image.isExplored()) {
+			ivFavourite.setClickable(false);
+			ImgurAPI.getClient().getDetailImage(mContext, image.getId(), getListener(), getErrorListener(new TokenHandle() {
+				
+				@Override
+				public void onRefreshSuccess() {
+					getDetailForImage(image);
+				}
+				
+				@Override
+				public void onRefreshFailed() {	
+				}
+			}));
+		} else {
+			if (image.isFavorite()) {
+				ivFavourite.setImageResource(R.drawable.ic_favorite_positive);
+			} else {
+				ivFavourite.setImageResource(R.drawable.ic_favorite_negative);
+			}
 		}
 	}
 	
@@ -266,15 +318,19 @@ public class GalleriesArticleFragment extends BaseFragment implements OnClickLis
 
 			@Override
 			public void onResponse(JSONObject json) {
-				mGallery = DataParsingController.parseGallery(json);
-				listImages = mGallery.getImages();
-				
-				// Set height for first image
-				MGallery image = listImages.get(0);
-				pagerContent.getLayoutParams().height = image.getHeight();
-				
-				listImageAdapter = new ListImagesAdapter(listImages);
-				pagerContent.setAdapter(listImageAdapter);
+				MGallery gallery = DataParsingController.parseGallery(json);
+				if (!isExploreDetail) {
+					mGallery.setImages(gallery.getImages());
+					fillViews();
+				} else {
+					mGallery.getImages().get(currentImage).setFavorite(gallery.isFavorite());
+					ivFavourite.setClickable(true);
+					if (gallery.isFavorite()) {
+						ivFavourite.setImageResource(R.drawable.ic_favorite_positive);
+					} else {
+						ivFavourite.setImageResource(R.drawable.ic_favorite_negative);
+					}
+				}
 			}
 		};
 	}
@@ -283,57 +339,156 @@ public class GalleriesArticleFragment extends BaseFragment implements OnClickLis
 	public void onClick(View v) {
 		if (v == ivContent) {
 			showFullImage(mGallery.getLink());
+			
 		} else if (v == textLinkDetail) {
 			setClipboard("link", shortLink);
+			
 		} else if (v == textLinkDirect) {
-			setClipboard("direct", mGallery.getLink());
+			if (!isExploreDetail){
+				setClipboard("direct", mGallery.getLink());
+			} else {
+				setClipboard("direct", mGallery.getImages().get(currentImage).getLink());
+			}
+			
 		} else if (v == ivFavourite) {
 			toggleFavorite();
-			
 			if (mGallery.isAlbum()) {
-				ImgurAPI.getClient().favoriteAlbum(mContext, mGallery.getId(), new Listener<JSONObject>() {
-
-					@Override
-					public void onResponse(JSONObject arg0) {
-						handleOnFavoriteSuccess("album", arg0);
-					}
-				}, new ErrorListener() {
-
-					@Override
-					public void onErrorResponse(VolleyError arg0) {
-						toggleFavorite();
-						Toast.makeText(mContext, "Got something wrong, please try again.", Toast.LENGTH_SHORT).show();
-					}
-				});	
+				if (!isExploreDetail) {
+					postFavoriteAlbum();
+				} else {
+					postFavoriteImage(mGallery.getImages().get(currentImage).getId());
+				}
 			} else {
-				ImgurAPI.getClient().favoriteImage(mContext, mGallery.getId(), new Listener<JSONObject>() {
-
-					@Override
-					public void onResponse(JSONObject arg0) {
-						handleOnFavoriteSuccess("image", arg0);
-					}
-				}, new ErrorListener() {
-
-					@Override
-					public void onErrorResponse(VolleyError arg0) {
-						toggleFavorite();
-						Toast.makeText(mContext, "Got something wrong, please try again.", Toast.LENGTH_SHORT).show();
-					}
-				});
+				postFavoriteImage(mGallery.getId());
 			}
+		} else if (v == textDetailGallery) {
+			isExploreDetail = true;
+			toggleDirectLink();
+			
+			textDetailGallery.setVisibility(View.GONE);
+			ivContent.setVisibility(View.GONE);
+			pagerContent.setVisibility(View.VISIBLE);
+			
+			RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(
+					ViewGroup.LayoutParams.WRAP_CONTENT,
+			        ViewGroup.LayoutParams.WRAP_CONTENT);
+			lp.addRule(RelativeLayout.BELOW, R.id.pager_content);
+			rlSocial.setLayoutParams(lp);
+			
+			getDetailForImage(mGallery.getImages().get(0));
+			fillImageDetail(mGallery.getImages().get(0));
+			mGallery.getImages().get(0).setExplored(true);
+			
+			pagerContent.setOnPageChangeListener(new OnPageChangeListener() {
+				
+				@Override
+				public void onPageSelected(int arg0) {
+					/*MGallery image = listImages.get(arg0);
+					pagerContent.getLayoutParams().height = image.getHeight();*/
+					currentImage = arg0;
+					getDetailForImage(mGallery.getImages().get(arg0));
+					fillImageDetail(mGallery.getImages().get(arg0));
+					mGallery.getImages().get(arg0).setExplored(true);
+					LogUtility.e(TAG, mGallery.getImages().get(arg0).isExplored());
+				}
+				
+				@Override
+				public void onPageScrolled(int arg0, float arg1, int arg2) {
+				}
+				
+				@Override
+				public void onPageScrollStateChanged(int arg0) {
+				}
+			});
+			
+			listImageAdapter = new ListImagesAdapter(mGallery.getImages());
+			pagerContent.setAdapter(listImageAdapter);
 		}
+	}
+	
+	/**
+	 * Send a favorite request to specified album
+	 */
+	private void postFavoriteAlbum() {
+		ImgurAPI.getClient().favoriteAlbum(mContext, mGallery.getId(), new Listener<JSONObject>() {
+
+			@Override
+			public void onResponse(JSONObject arg0) {
+				handleOnFavoriteSuccess("album", arg0);
+			}
+		}, getErrorListener(new TokenHandle() {
+			
+			@Override
+			public void onRefreshSuccess() {
+				postFavoriteAlbum();
+			}
+			
+			@Override
+			public void onRefreshFailed() {
+				toggleFavorite();
+				Toast.makeText(mContext, "Got something wrong, please try again.", Toast.LENGTH_SHORT).show();
+			}
+		}));	
+	}
+	
+	/**
+	 * Send a favorite request to specified image
+	 */
+	private void postFavoriteImage(final String imageId) {
+		ImgurAPI.getClient().favoriteImage(mContext, imageId, new Listener<JSONObject>() {
+
+			@Override
+			public void onResponse(JSONObject arg0) {
+				handleOnFavoriteSuccess("image", arg0);
+			}
+		}, getErrorListener(new TokenHandle() {
+			
+			@Override
+			public void onRefreshSuccess() {
+				postFavoriteImage(imageId);
+			}
+			
+			@Override
+			public void onRefreshFailed() {
+				toggleFavorite();
+				Toast.makeText(mContext, "Got something wrong, please try again.", Toast.LENGTH_SHORT).show();
+			}
+		}));
 	}
 	
 	/**
 	 * Toggle the favorite button
 	 */
 	private void toggleFavorite() {
-		if (mGallery.isFavorite()) {
-			mGallery.setFavorite(false);
-			ivFavourite.setImageResource(R.drawable.ic_favorite_false);
+		if (!isExploreDetail) {
+			if (mGallery.isFavorite()) {
+				mGallery.setFavorite(false);
+				ivFavourite.setImageResource(R.drawable.ic_favorite_negative);
+			} else {
+				mGallery.setFavorite(true);
+				ivFavourite.setImageResource(R.drawable.ic_favorite_positive);
+			}
 		} else {
-			mGallery.setFavorite(true);
-			ivFavourite.setImageResource(R.drawable.ic_favorite_true);
+			if (mGallery.getImages().get(currentImage).isFavorite()) {
+				mGallery.getImages().get(currentImage).setFavorite(false);
+				ivFavourite.setImageResource(R.drawable.ic_favorite_negative);
+			} else {
+				mGallery.getImages().get(currentImage).setFavorite(true);
+				ivFavourite.setImageResource(R.drawable.ic_favorite_positive);
+			}
+		}
+	}
+	
+	/**
+	 * Toggle direct link
+	 */
+	private void toggleDirectLink() {
+		if (!isExploreDetail) {
+			textLinkDirect.setClickable(false);
+			textLinkDirect.setTextColor(getResources().getColor(R.color.text_link_negative));
+		} else {
+			textLinkDirect.setClickable(true);
+			textLinkDirect.setTextColor(getResources().getColor(R.color.text_link_positive));
 		}
 	}
 	

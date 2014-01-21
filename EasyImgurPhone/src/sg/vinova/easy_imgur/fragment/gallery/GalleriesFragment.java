@@ -47,14 +47,24 @@ public class GalleriesFragment extends BaseFragment implements
 	// ListView galleries
 	private ListView lvGalleries;
 
-	// List data
-	private List<MGallery> galleries;
+	// List all galleries data
+	private List<MGallery> allGalleries;
+	
+	// List galleries load on list view
+	private List<MGallery> galleriesOnList;
+	
+	// page item
+	private int pageItem;
 
 	// List adapter
 	private GalleryAdapter adapter;
 
 	// flag check load next page
 	private boolean isMore;
+	
+	// custom paging for load 10 item per scroll
+	private int startIndex;
+	private int endIndex;
 
 	// pull to refresh layout
 	private PullToRefreshLayout mPullToRefreshLayout;
@@ -65,9 +75,11 @@ public class GalleriesFragment extends BaseFragment implements
 	private String[] sections;
 
 	public GalleriesFragment() {
-		galleries = new ArrayList<MGallery>();
+		allGalleries = new ArrayList<MGallery>();
+		galleriesOnList = new ArrayList<MGallery>();
 		currSection = Constant.PARAM_TYPE_SECTION_HOT;
 		currSectionPos = 0;
+		pageItem = 0;
 	}
 
 	@Override
@@ -83,7 +95,7 @@ public class GalleriesFragment extends BaseFragment implements
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
-		if (galleries.isEmpty()) {
+		if (allGalleries.isEmpty()) {
 			getAllGalleries();
 		}
 	}
@@ -97,7 +109,7 @@ public class GalleriesFragment extends BaseFragment implements
 	private void findViews(View view) {
 		// Connect to UI component
 		lvGalleries = (ListView) view.findViewById(R.id.lv_galleries);
-		adapter = new GalleryAdapter(mContext, R.layout.row_gallery, galleries);
+		adapter = new GalleryAdapter(mContext, R.layout.row_gallery, galleriesOnList);
 		lvGalleries.setAdapter(adapter);
 		
 		lvGalleries.setOnItemClickListener(this);
@@ -118,8 +130,7 @@ public class GalleriesFragment extends BaseFragment implements
 				if (loadMore && currentState != SCROLL_STATE_IDLE) {
 					if (isMore) {
 						isMore = false;
-						page++;
-						getAllGalleries();
+						loadGalleriesOnList();
 					}
 				}
 			}
@@ -143,10 +154,36 @@ public class GalleriesFragment extends BaseFragment implements
 	@Override
 	public void onRefreshStarted(View view) {
 		page = 0;
+		pageItem = 0;
 		getAllGalleries();
+	}
+	
+	/**
+	 * Custom load 10 item to list per scroll
+	 */
+	private void loadGalleriesOnList() {
+		startIndex = pageItem * Constant.ITEM_PER_PAGE;
+		++pageItem;
+		endIndex = pageItem * Constant.ITEM_PER_PAGE;
+		
+		LogUtility.e(TAG, "start: " + startIndex + "--- end: "+endIndex);
+		
+		if (endIndex >= allGalleries.size()) {
+			page++;
+			getAllGalleries();
+			
+		} else {
+			for (int i = startIndex; i < endIndex; i++) {
+				galleriesOnList.add(allGalleries.get(i));
+			}
+			isMore = true;
+		}
+		
+		adapter.notifyDataSetChanged();
 	}
 
 	private void getAllGalleries() {
+		LogUtility.e(TAG, "Load image in page: " + page);
 		ImgurAPI.getClient().getAllGallery(mContext, currSection, page, null,
 				null, true, getListener(), getErrorListener(new TokenHandle() {
 					
@@ -169,15 +206,59 @@ public class GalleriesFragment extends BaseFragment implements
 
 			@Override
 			public void onResponse(JSONObject json) {
-				isMore = true;
 				List<MGallery> lstTmp = DataParsingController
 						.parseGalleries(json);
 				if (page == 0) {
-					galleries.clear();
+					allGalleries.clear();
+					galleriesOnList.clear();
+					allGalleries.addAll(lstTmp);
+					loadGalleriesOnList();
+					isMore = true;
+					return;
+				} 
+				if (page > 0) {
+					allGalleries.addAll(lstTmp);
+					LogUtility.e(TAG, "Load image in next page on list");
+					for (int i = startIndex; i < endIndex; i++) {
+						galleriesOnList.add(allGalleries.get(i));
+					}
+					adapter.notifyDataSetChanged();
+					mPullToRefreshLayout.setRefreshComplete();
+					isMore = true;
+					return;
 				}
-				galleries.addAll(lstTmp);
-				adapter.notifyDataSetChanged();
-				mPullToRefreshLayout.setRefreshComplete();
+				
+			}
+		};
+	}
+	
+	private void loadAlbums(String albumId, ImageView ivThumb) {
+		ImgurAPI.getClient().getAlbumDetails(mContext, albumId, getAlbumDetailsListener(ivThumb), getErrorListener(new TokenHandle() {
+			
+			@Override
+			public void onRefreshSuccess() {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void onRefreshFailed() {
+				// TODO Auto-generated method stub
+				
+			}
+		}));
+	}
+	
+	private Response.Listener<JSONObject> getAlbumDetailsListener(final ImageView ivThumb) {
+		return new Listener<JSONObject>() {
+
+			@Override
+			public void onResponse(JSONObject json) {
+				LogUtility.e(TAG, "Load first image in album");
+				MGallery gallery = DataParsingController.parseGallery(json);
+				if (gallery.getImagesCount() > 0 && !gallery.getImages().isEmpty()) {
+					imageLoader.displayImage(gallery.getImages().get(0).getLink(), ivThumb, options);
+				}
 			}
 		};
 	}
@@ -261,7 +342,7 @@ public class GalleriesFragment extends BaseFragment implements
 
 				
 	public void onItemClick(AdapterView<?> parent, View view, int position, long itemId) {
-		switchContent(new GalleriesArticleFragment(galleries.get(position)),
+		switchContent(new GalleriesArticleFragment(allGalleries.get(position)),
 				true, GalleriesArticleFragment.TAG);
 	}
 

@@ -6,6 +6,7 @@ public class Constant {
 	 */
 	public static final boolean IS_APP_LOG_ENABLED = true;
 	public static final int APP_DEFAULT_VERSION = 1;
+	public static final int ITEM_PER_PAGE = 10;
 	public static final String CLIENT_ID = "689dac97ad042ec";
 	public static final String CLIENT_SECRET = "880120ee38e14a04e330ba9665f06fed566ed1b3";
 	

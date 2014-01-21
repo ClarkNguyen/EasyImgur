@@ -103,41 +103,43 @@ public class BaseActivity extends SherlockFragmentActivity {
 			@Override
 			public void onErrorResponse(VolleyError err) {
 				showProgressBar(false);
-				if (err.networkResponse.statusCode == 403) {
-					// handle refresh token
-					ImgurAPI.getClient().getNewToken(BaseActivity.this, new Response.Listener<JSONObject>() {
+				if (err.networkResponse != null) {
+					if (err.networkResponse.statusCode == 403) {
+						// handle refresh token
+						ImgurAPI.getClient().getNewToken(BaseActivity.this, new Response.Listener<JSONObject>() {
 
-						@Override
-						public void onResponse(JSONObject json) {
-							LogUtility.e(TAG, "RefreshToken: " + json.toString());
-							if (json != null) {
-								if (tokenHandle != null) {
-									try {
-										MUser mUser = TokenUtility.getUser(BaseActivity.this);
-										mUser.setAccessToken(json.getString("access_token"));
-										mUser.setExpires(json.getInt("expires_in"));
-										mUser.setRefreshToken(json.getString("refresh_token"));
-										mUser.setUserName(json.getString("account_username"));
-										mUser.setTokenType(json.getString("token_type"));
-										
-										TokenUtility.saveUser(BaseActivity.this, new Gson().toJson(mUser));
-										tokenHandle.onRefreshSuccess();
-									} catch (Exception e) {
-										LogUtility.e(TAG, "Parse token error");
+							@Override
+							public void onResponse(JSONObject json) {
+								LogUtility.e(TAG, "RefreshToken: " + json.toString());
+								if (json != null) {
+									if (tokenHandle != null) {
+										try {
+											MUser mUser = TokenUtility.getUser(BaseActivity.this);
+											mUser.setAccessToken(json.getString("access_token"));
+											mUser.setExpires(json.getInt("expires_in"));
+											mUser.setRefreshToken(json.getString("refresh_token"));
+											mUser.setUserName(json.getString("account_username"));
+											mUser.setTokenType(json.getString("token_type"));
+											
+											TokenUtility.saveUser(BaseActivity.this, new Gson().toJson(mUser));
+											tokenHandle.onRefreshSuccess();
+										} catch (Exception e) {
+											LogUtility.e(TAG, "Parse token error");
+										}
 									}
 								}
 							}
-						}
-					}, new Response.ErrorListener() {
+						}, new Response.ErrorListener() {
 
-						@Override
-						public void onErrorResponse(VolleyError err) {
-							LogUtility.e(TAG, "RefreshTokenError: " + err.networkResponse.statusCode);
-							if (tokenHandle != null) {
-								tokenHandle.onRefreshFailed();
+							@Override
+							public void onErrorResponse(VolleyError err) {
+								LogUtility.e(TAG, "RefreshTokenError: " + err.networkResponse.statusCode);
+								if (tokenHandle != null) {
+									tokenHandle.onRefreshFailed();
+								}
 							}
-						}
-					});
+						});
+					}
 				} else {
 					handleOnError(err);
 				}

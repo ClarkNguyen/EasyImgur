@@ -69,6 +69,7 @@
                 android:focusable="false"
                 android:src="@drawable/ic_gif_play"
                 android:visibility="gone" />
+
         </RelativeLayout>
 
         <RelativeLayout
