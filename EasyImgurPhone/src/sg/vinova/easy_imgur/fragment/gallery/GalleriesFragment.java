@@ -232,8 +232,8 @@ public class GalleriesFragment extends BaseFragment implements
 		};
 	}
 	
-	private void loadAlbums(String albumId, ImageView ivThumb) {
-		ImgurAPI.getClient().getAlbumDetails(mContext, albumId, getAlbumDetailsListener(ivThumb), getErrorListener(new TokenHandle() {
+	private void loadAlbums(String albumId, ImageView ivThumb, int position) {
+		ImgurAPI.getClient().getAlbumDetails(mContext, albumId, getAlbumDetailsListener(ivThumb, position), getErrorListener(new TokenHandle() {
 			
 			@Override
 			public void onRefreshSuccess() {
@@ -249,7 +249,7 @@ public class GalleriesFragment extends BaseFragment implements
 		}));
 	}
 	
-	private Response.Listener<JSONObject> getAlbumDetailsListener(final ImageView ivThumb) {
+	private Response.Listener<JSONObject> getAlbumDetailsListener(final ImageView ivThumb, final int position) {
 		return new Listener<JSONObject>() {
 
 			@Override
@@ -258,6 +258,7 @@ public class GalleriesFragment extends BaseFragment implements
 				MGallery gallery = DataParsingController.parseGallery(json);
 				if (gallery.getImagesCount() > 0 && !gallery.getImages().isEmpty()) {
 					imageLoader.displayImage(gallery.getImages().get(0).getLink(), ivThumb, options);
+					galleriesOnList.set(position, gallery);
 				}
 			}
 		};
@@ -321,8 +322,13 @@ public class GalleriesFragment extends BaseFragment implements
 				}
 			} else {
 				holder.ibGifPlay.setVisibility(View.GONE);
-				holder.ivThumb.setImageDrawable(getResources().getDrawable(
-						R.drawable.bg_default));
+				if (mGallery.getImages() != null && !mGallery.getImages().isEmpty()) {
+					imageLoader.displayImage(mGallery.getImages().get(0).getLink(), holder.ivThumb, options);
+				} else {
+					loadAlbums(mGallery.getId(), holder.ivThumb, position);
+				}
+//				holder.ivThumb.setImageDrawable(getResources().getDrawable(
+//						R.drawable.bg_default));
 			}
 
 			return row;
