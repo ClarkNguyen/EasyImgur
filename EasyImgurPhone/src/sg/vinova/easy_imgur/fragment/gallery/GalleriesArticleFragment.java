@@ -321,6 +321,40 @@ public class GalleriesArticleFragment extends BaseFragment implements OnClickLis
 		}
 	}
 	
+	public void getDetailAfterVote(boolean isAlbum) {
+		if (isAlbum) {
+			ImgurAPI.getClient().getDetailGallery(mContext, mGallery.getId(), getAfterVoteListener(), getErrorListener(new TokenHandle() {
+				
+				@Override
+				public void onRefreshSuccess() {
+					// TODO Auto-generated method stub
+					
+				}
+				
+				@Override
+				public void onRefreshFailed() {
+					// TODO Auto-generated method stub
+					
+				}
+			}));
+		} else {
+			ImgurAPI.getClient().getDetailImage(mContext, mGallery.getId(), getAfterVoteListener(), getErrorListener(new TokenHandle() {
+				
+				@Override
+				public void onRefreshSuccess() {
+					// TODO Auto-generated method stub
+					
+				}
+				
+				@Override
+				public void onRefreshFailed() {
+					// TODO Auto-generated method stub
+					
+				}
+			}));
+		}
+	}
+	
 	/**
 	 * Listener for getting gallery detail
 	 * @return
@@ -343,6 +377,18 @@ public class GalleriesArticleFragment extends BaseFragment implements OnClickLis
 						ivFavourite.setImageResource(R.drawable.ic_favorite_negative);
 					}
 				}
+			}
+		};
+	}
+	
+	private Response.Listener<JSONObject> getAfterVoteListener() {
+		return new Listener<JSONObject>() {
+
+			@Override
+			public void onResponse(JSONObject json) {
+				MGallery gallery = DataParsingController.parseGallery(json);
+				tvUps.setText(gallery.getUps()+"");
+				tvDowns.setText(gallery.getDowns()+"");
 			}
 		};
 	}
@@ -542,6 +588,8 @@ public class GalleriesArticleFragment extends BaseFragment implements OnClickLis
 	 * Toggle vote buttons
 	 */
 	private void toggleVote(boolean isUp) {
+		getDetailAfterVote(mGallery.isAlbum());
+		
 		String vote;
 		if (isUp) {
 			vote = "up";
