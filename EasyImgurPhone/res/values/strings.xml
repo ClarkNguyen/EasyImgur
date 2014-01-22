@@ -8,6 +8,7 @@
     <!-- Left menu categories -->
     <string-array name="menu_categories">
         <item>Galleries</item>
+        <item>Memes</item>
         <item>Albums</item>
         <item>My Photos</item>
         <item>Login</item>
