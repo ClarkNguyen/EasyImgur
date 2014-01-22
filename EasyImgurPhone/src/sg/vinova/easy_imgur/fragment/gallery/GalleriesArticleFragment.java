@@ -7,6 +7,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import sg.vinova.easy_imgur.activity.R;
+import sg.vinova.easy_imgur.base.Constant;
 import sg.vinova.easy_imgur.base.DataParsingController;
 import sg.vinova.easy_imgur.fragment.base.BaseFragment;
 import sg.vinova.easy_imgur.interfaces.TokenHandle;
@@ -80,7 +81,7 @@ public class GalleriesArticleFragment extends BaseFragment implements OnClickLis
 	
 	private String shortLink;
 	
-	// Vlag for check if user is viewing detail of album
+	// Flag for check if user is viewing detail of album
 	private boolean isExploreDetail = false;
 	
 	// Value to hold current album's image
@@ -213,7 +214,7 @@ public class GalleriesArticleFragment extends BaseFragment implements OnClickLis
 		 * Info
 		 */
 		tvPoints.setText(mGallery.getScore()+"");
-		handleLink(mGallery.getLink());
+		removeUnnecessaryStrings(mGallery.getLink());
 		tvLink.setText(shortLink);
 		
 		if (mGallery.isFavorite()) {
@@ -233,9 +234,9 @@ public class GalleriesArticleFragment extends BaseFragment implements OnClickLis
 		tvDowns.setText(mGallery.getDowns()+"");
 		
 		if (mGallery.getVote() != null) {
-			if (mGallery.getVote().equals("up")) {
+			if (mGallery.getVote().equals(Constant.VOTE_UP)) {
 				ivUps.setImageResource(R.drawable.ic_ups_positive);
-			} else if (mGallery.getVote().equals("down") || mGallery.getVote().equals("veto")) {
+			} else if (mGallery.getVote().equals(Constant.VOTE_DOWN) || mGallery.getVote().equals(Constant.VOTE_UNDEFINED)) {
 				ivDowns.setImageResource(R.drawable.ic_downs_positive);
 			}
 		}
@@ -247,17 +248,6 @@ public class GalleriesArticleFragment extends BaseFragment implements OnClickLis
 	}
 	
 	/**
-	 * handle link
-	 */
-	private void handleLink(String link) {
-		shortLink = TextRefineUtil.refineString(link);
-		shortLink = StringUtility.removeString("http://", shortLink);
-		shortLink = StringUtility.removeString(".jpg", shortLink);
-		shortLink = StringUtility.removeString(".png", shortLink);
-		shortLink = StringUtility.removeString(".gif", shortLink);
-	}
-	
-	/**
 	 * Fill the detail of an image
 	 * @param imageId
 	 */
@@ -265,13 +255,24 @@ public class GalleriesArticleFragment extends BaseFragment implements OnClickLis
 		/**
 		 * Info
 		 */
-		handleLink(image.getLink());
+		removeUnnecessaryStrings(image.getLink());
 		tvLink.setText(shortLink);
 		
 		if (image.isFavorite()) {
 			ivFavourite.setImageResource(R.drawable.ic_favorite_positive);
 		} else {
 			ivFavourite.setImageResource(R.drawable.ic_favorite_negative);
+		}
+	}
+	
+	/**
+	 * Remove unnecessary strings in link
+	 * @param link
+	 */
+	private void removeUnnecessaryStrings(String link) {
+		shortLink = TextRefineUtil.refineString(link);
+		for (int i = 0; i < Constant.REMOVEABLE_STRINGS.length; i++) {
+			shortLink = StringUtility.removeString(Constant.REMOVEABLE_STRINGS[i], shortLink);
 		}
 	}
 	
@@ -321,40 +322,6 @@ public class GalleriesArticleFragment extends BaseFragment implements OnClickLis
 		}
 	}
 	
-	public void getDetailAfterVote(boolean isAlbum) {
-		if (isAlbum) {
-			ImgurAPI.getClient().getDetailGallery(mContext, mGallery.getId(), getAfterVoteListener(), getErrorListener(new TokenHandle() {
-				
-				@Override
-				public void onRefreshSuccess() {
-					// TODO Auto-generated method stub
-					
-				}
-				
-				@Override
-				public void onRefreshFailed() {
-					// TODO Auto-generated method stub
-					
-				}
-			}));
-		} else {
-			ImgurAPI.getClient().getDetailImage(mContext, mGallery.getId(), getAfterVoteListener(), getErrorListener(new TokenHandle() {
-				
-				@Override
-				public void onRefreshSuccess() {
-					// TODO Auto-generated method stub
-					
-				}
-				
-				@Override
-				public void onRefreshFailed() {
-					// TODO Auto-generated method stub
-					
-				}
-			}));
-		}
-	}
-	
 	/**
 	 * Listener for getting gallery detail
 	 * @return
@@ -381,31 +348,19 @@ public class GalleriesArticleFragment extends BaseFragment implements OnClickLis
 		};
 	}
 	
-	private Response.Listener<JSONObject> getAfterVoteListener() {
-		return new Listener<JSONObject>() {
-
-			@Override
-			public void onResponse(JSONObject json) {
-				MGallery gallery = DataParsingController.parseGallery(json);
-				tvUps.setText(gallery.getUps()+"");
-				tvDowns.setText(gallery.getDowns()+"");
-			}
-		};
-	}
-
 	@Override
 	public void onClick(View v) {
 		if (v == ivContent) {
 			showFullImage(mGallery.getLink());
 			
 		} else if (v == textLinkDetail) {
-			setClipboard("link", shortLink);
+			setClipboard(Constant.TAG_CLIPBOARD_LINK, shortLink);
 			
 		} else if (v == textLinkDirect) {
 			if (!isExploreDetail){
-				setClipboard("direct", mGallery.getLink());
+				setClipboard(Constant.TAG_CLIPBOARD_DIRECT, mGallery.getLink());
 			} else {
-				setClipboard("direct", mGallery.getImages().get(currentImage).getLink());
+				setClipboard(Constant.TAG_CLIPBOARD_DIRECT, mGallery.getImages().get(currentImage).getLink());
 			}
 			
 		} else if (v == ivFavourite) {
@@ -463,8 +418,8 @@ public class GalleriesArticleFragment extends BaseFragment implements OnClickLis
 			pagerContent.setAdapter(listImageAdapter);
 		} else if (v == llUps) {
 			if (mGallery.getVote() != null) {
-				if (mGallery.getVote().equals("up")) {
-					Toast.makeText(mContext, "You had already voted up!", Toast.LENGTH_SHORT).show();
+				if (mGallery.getVote().equals(Constant.VOTE_UP)) {
+					Toast.makeText(mContext, getString(R.string.message_already_voted_up), Toast.LENGTH_SHORT).show();
 				} else {
 					toggleVote(true);
 				}
@@ -474,8 +429,8 @@ public class GalleriesArticleFragment extends BaseFragment implements OnClickLis
 
 		} else if (v == llDowns) {
 			if (mGallery.getVote() != null) {
-				if (mGallery.getVote().equals("down")) {
-					Toast.makeText(mContext, "You had already voted down!", Toast.LENGTH_SHORT).show();
+				if (mGallery.getVote().equals(Constant.VOTE_DOWN)) {
+					Toast.makeText(mContext, getString(R.string.message_already_voted_down), Toast.LENGTH_SHORT).show();
 				} else {
 					toggleVote(false);
 				}
@@ -495,7 +450,19 @@ public class GalleriesArticleFragment extends BaseFragment implements OnClickLis
 
 			@Override
 			public void onResponse(JSONObject jsonObj) {
-				handleOnVoteSuccess(isUp, "gallery", jsonObj);
+				boolean isSuccess;
+				try {
+					isSuccess = jsonObj.getBoolean(Constant.TAG_PARSE_SUCCESS);
+					if (isSuccess) {
+						if (isUp) {
+							Toast.makeText(mContext, getString(R.string.message_voted_up), Toast.LENGTH_SHORT).show();
+						} else {
+							Toast.makeText(mContext, getString(R.string.message_voted_down), Toast.LENGTH_SHORT).show();
+						}
+					}
+				} catch (JSONException e) {
+					e.printStackTrace();
+				}
 			}
 		}, getErrorListener(new TokenHandle() {
 			
@@ -506,7 +473,7 @@ public class GalleriesArticleFragment extends BaseFragment implements OnClickLis
 			
 			@Override
 			public void onRefreshFailed() {
-				Toast.makeText(mContext, "Got something wrong, please try again.", Toast.LENGTH_SHORT).show();
+				Toast.makeText(mContext, getString(R.string.message_response_error), Toast.LENGTH_SHORT).show();
 			}
 		}));
 	}
@@ -519,7 +486,7 @@ public class GalleriesArticleFragment extends BaseFragment implements OnClickLis
 
 			@Override
 			public void onResponse(JSONObject arg0) {
-				handleOnFavoriteSuccess("album", arg0);
+				handleOnFavoriteSuccess(Constant.TAG_ALBUM, arg0);
 			}
 		}, getErrorListener(new TokenHandle() {
 			
@@ -531,7 +498,7 @@ public class GalleriesArticleFragment extends BaseFragment implements OnClickLis
 			@Override
 			public void onRefreshFailed() {
 				toggleFavorite();
-				Toast.makeText(mContext, "Got something wrong, please try again.", Toast.LENGTH_SHORT).show();
+				Toast.makeText(mContext, getString(R.string.message_response_error), Toast.LENGTH_SHORT).show();
 			}
 		}));	
 	}
@@ -544,7 +511,7 @@ public class GalleriesArticleFragment extends BaseFragment implements OnClickLis
 
 			@Override
 			public void onResponse(JSONObject arg0) {
-				handleOnFavoriteSuccess("image", arg0);
+				handleOnFavoriteSuccess(Constant.TAG_IMAGE, arg0);
 			}
 		}, getErrorListener(new TokenHandle() {
 			
@@ -556,7 +523,7 @@ public class GalleriesArticleFragment extends BaseFragment implements OnClickLis
 			@Override
 			public void onRefreshFailed() {
 				toggleFavorite();
-				Toast.makeText(mContext, "Got something wrong, please try again.", Toast.LENGTH_SHORT).show();
+				Toast.makeText(mContext, getString(R.string.message_response_error), Toast.LENGTH_SHORT).show();
 			}
 		}));
 	}
@@ -587,16 +554,14 @@ public class GalleriesArticleFragment extends BaseFragment implements OnClickLis
 	/**
 	 * Toggle vote buttons
 	 */
-	private void toggleVote(boolean isUp) {
-		getDetailAfterVote(mGallery.isAlbum());
-		
+	private void toggleVote(boolean isUp) {		
 		String vote;
 		if (isUp) {
-			vote = "up";
+			vote = Constant.VOTE_UP;
 			ivUps.setImageResource(R.drawable.ic_ups_positive);
 			ivDowns.setImageResource(R.drawable.ic_downs_negative);
 		} else {
-			vote = "down";
+			vote = Constant.VOTE_DOWN;
 			ivUps.setImageResource(R.drawable.ic_ups_negative);
 			ivDowns.setImageResource(R.drawable.ic_downs_positive);
 		}
@@ -627,41 +592,18 @@ public class GalleriesArticleFragment extends BaseFragment implements OnClickLis
 		boolean isSuccess;
 		String isFavorite;
 		try {
-			isSuccess = json.getBoolean("success");
-			isFavorite = json.getString("data");
+			isSuccess = json.getBoolean(Constant.TAG_PARSE_SUCCESS);
+			isFavorite = json.getString(Constant.TAG_PARSE_DATA);
 			if (isSuccess) {
-				if (isFavorite.equals("favorited")) {
-					Toast.makeText(mContext, "You added an " + type + " to favorite.", Toast.LENGTH_SHORT).show();
+				if (isFavorite.equals(Constant.TAG_PARSE_FAVORITED)) {
+					Toast.makeText(mContext, type + getString(R.string.message_added), Toast.LENGTH_SHORT).show();
 				} else {
-					Toast.makeText(mContext, "You removed an " + type + " from favorite.", Toast.LENGTH_SHORT).show();
+					Toast.makeText(mContext, type + getString(R.string.message_removed), Toast.LENGTH_SHORT).show();
 				}
 			}
 		} catch (JSONException e) {
 			toggleFavorite();
-			Toast.makeText(mContext, "Got something wrong, please try again.", Toast.LENGTH_SHORT).show();
-			e.printStackTrace();
-		}
-	}
-	
-	/**
-	 * On vote success
-	 * @param isUp
-	 * @param type
-	 * @param json
-	 */
-	private void handleOnVoteSuccess(boolean isUp, String type, JSONObject json) {
-		boolean isSuccess;
-		try {
-			isSuccess = json.getBoolean("success");
-			if (isSuccess) {
-				if (isUp) {
-					Toast.makeText(mContext, "You voted up an " + type + ".", Toast.LENGTH_SHORT).show();
-				} else {
-					Toast.makeText(mContext, "You voted down an " + type + ".", Toast.LENGTH_SHORT).show();
-				}
-			}
-		} catch (JSONException e) {
-			// TODO Auto-generated catch block
+			Toast.makeText(mContext, getString(R.string.message_response_error), Toast.LENGTH_SHORT).show();
 			e.printStackTrace();
 		}
 	}
@@ -681,7 +623,7 @@ public class GalleriesArticleFragment extends BaseFragment implements OnClickLis
 			ClipData clip = ClipData.newPlainText(tag, text);
 			clipboard.setPrimaryClip(clip);
 		}
-		Toast.makeText(mContext, text + " copied.", Toast.LENGTH_SHORT).show();
+		Toast.makeText(mContext, text + getString(R.string.message_copied), Toast.LENGTH_SHORT).show();
 	}
 	
 	/**

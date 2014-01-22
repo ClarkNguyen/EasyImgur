@@ -58,7 +58,21 @@ public class Constant {
 	 */
 	public static final String TAG_PARSE_DATA = "data";
 	public static final String TAG_PARSE_IMAGES = "images";
+	public static final String TAG_PARSE_SUCCESS = "success";
+	public static final String TAG_PARSE_FAVORITED = "favorited";
 	
 	public static final String ERROR_PARSE_GALLERY_DETAIL = "parse gallery error";
 	public static final String ERROR_PARSE_LIST_IMAGES = "parse images error";
+	
+	/**
+	 * Gallery detail constants
+	 */
+	public static final String VOTE_UP = "up";
+	public static final String VOTE_DOWN = "down";
+	public static final String VOTE_UNDEFINED = "veto";
+	public static final String REMOVEABLE_STRINGS[] = {"http://", ".jpg", ".png", ".gif"};
+	public static final String TAG_CLIPBOARD_LINK = "EasyImgur link";
+	public static final String TAG_CLIPBOARD_DIRECT = "EasyImgur direct";
+	public static final String TAG_ALBUM = "Album";
+	public static final String TAG_IMAGE = "Image";
 }
