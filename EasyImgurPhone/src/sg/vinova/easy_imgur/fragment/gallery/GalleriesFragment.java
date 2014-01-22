@@ -214,6 +214,7 @@ public class GalleriesFragment extends BaseFragment implements
 					allGalleries.addAll(lstTmp);
 					loadGalleriesOnList();
 					isMore = true;
+					mPullToRefreshLayout.setRefreshComplete();
 					return;
 				} 
 				if (page > 0) {
@@ -223,7 +224,6 @@ public class GalleriesFragment extends BaseFragment implements
 						galleriesOnList.add(allGalleries.get(i));
 					}
 					adapter.notifyDataSetChanged();
-					mPullToRefreshLayout.setRefreshComplete();
 					isMore = true;
 					return;
 				}
@@ -327,8 +327,6 @@ public class GalleriesFragment extends BaseFragment implements
 				} else {
 					loadAlbums(mGallery.getId(), holder.ivThumb, position);
 				}
-//				holder.ivThumb.setImageDrawable(getResources().getDrawable(
-//						R.drawable.bg_default));
 			}
 
 			return row;

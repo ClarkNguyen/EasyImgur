@@ -189,18 +189,23 @@ public class ContentActivity extends BaseActivity implements
 				break;
 				
 			case 1:
-				// albums
+				// memes
 				currMenuPosition = 1;
 				break;
 				
 			case 2:
-				// my photos
+				// albums
 				currMenuPosition = 2;
 				break;
 				
 			case 3:
-				// login
+				// my photos
 				currMenuPosition = 3;
+				break;
+				
+			case 4:
+				// login
+				currMenuPosition = 4;
 				switchContent(new LoginFragment(), true, true, LoginFragment.TAG);
 				break;
 

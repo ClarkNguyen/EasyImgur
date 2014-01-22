@@ -64,7 +64,7 @@ public class BaseActivity extends SherlockFragmentActivity {
 				.showImageOnLoading(R.drawable.bg_default)
 				.showImageForEmptyUri(R.drawable.bg_default)
 				.showImageOnFail(R.drawable.bg_default)
-				.imageScaleType(ImageScaleType.IN_SAMPLE_INT)
+				.imageScaleType(ImageScaleType.IN_SAMPLE_POWER_OF_2)
 				.cacheInMemory(true).cacheOnDisc(true).build();
 		
 		actionBar = getSupportActionBar();

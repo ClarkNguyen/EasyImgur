@@ -210,6 +210,7 @@ public class ImgurAPI {
 
 	/**
 	 * Get album detail for show first image of album in list galleries
+	 * 
 	 * @param mContext
 	 * @param albumId
 	 * @param listener
@@ -219,7 +220,7 @@ public class ImgurAPI {
 			Response.Listener<JSONObject> listener,
 			Response.ErrorListener errorListener) {
 		String url = getUrl("gallery/album/") + albumId;
-		
+
 		HashMap<String, String> params = new HashMap<String, String>();
 
 		ImgurAPI.get(mContext, url, params, listener, errorListener);
@@ -294,24 +295,60 @@ public class ImgurAPI {
 
 		ImgurAPI.post(mContext, url, params, listener, errorListener);
 	}
-	
+
 	/**
 	 * Vote an gallery object
+	 * 
 	 * @param mContext
 	 * @param galleryId
 	 * @param isUp
 	 * @param listener
 	 * @param errorListener
 	 */
-	public void voteGallery(Context mContext, String galleryId, boolean isUp, Response.Listener<JSONObject> listener,
+	public void voteGallery(Context mContext, String galleryId, boolean isUp,
+			Response.Listener<JSONObject> listener,
 			Response.ErrorListener errorListener) {
 		String vote;
-		if (isUp) vote = "up";
-		else vote = "down";
+		if (isUp)
+			vote = "up";
+		else
+			vote = "down";
 		String url = getUrl("gallery/") + galleryId + "/vote/" + vote;
+
+		HashMap<String, String> params = new HashMap<String, String>();
+
+		ImgurAPI.post(mContext, url, params, listener, errorListener);
+	}
+
+	/**********************
+	 ******* MEME *********
+	 **********************/
+
+	/**
+	 * Get all meme list
+	 * @param mContext
+	 * @param sort
+	 * @param window
+	 * @param page
+	 * @param listener
+	 * @param errorListener
+	 */
+	public void getAllMeme(Context mContext, String sort, String window,
+			int page, Response.Listener<JSONObject> listener,
+			Response.ErrorListener errorListener) {
+		String url = "gallery/g/memes/";
+		if (TextUtils.isEmpty(sort)) {
+			url += "viral/";
+		} else {
+			url += sort;
+		}
+		if (!TextUtils.isEmpty(window)) {
+			url += window + "/";
+		}
+		url += page;
 		
 		HashMap<String, String> params = new HashMap<String, String>();
-		
-		ImgurAPI.post(mContext, url, params, listener, errorListener);
+
+		ImgurAPI.get(mContext, getUrl(url), params, listener, errorListener);
 	}
 }

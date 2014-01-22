@@ -8,6 +8,7 @@
     <!-- Left menu categories -->
     <string-array name="menu_categories">
         <item>Galleries</item>
+        <item>Memes</item>
         <item>Albums</item>
         <item>My Photos</item>
         <item>Login</item>
@@ -24,7 +25,6 @@
     <string name="text_copy_link">Copy link</string>
     <string name="text_copy_direct">Copy direct</string>
     <string name="loading">Loading</string>
-    
     <string name="tip_detail_gallery">Tap here to explore this album</string>
 
 </resources>
