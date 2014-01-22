@@ -69,6 +69,9 @@ public class MGallery {
 	@SerializedName("is_album")
 	private boolean album;
 	
+	@SerializedName("images_count")
+	private int imagesCount;
+	
 	private List<MGallery> images;
 	
 	private boolean isExplored;
@@ -79,6 +82,14 @@ public class MGallery {
 
 	public void setId(String id) {
 		this.id = id;
+	}
+
+	public int getImagesCount() {
+		return imagesCount;
+	}
+
+	public void setImagesCount(int imagesCount) {
+		this.imagesCount = imagesCount;
 	}
 
 	public String getTitle() {
