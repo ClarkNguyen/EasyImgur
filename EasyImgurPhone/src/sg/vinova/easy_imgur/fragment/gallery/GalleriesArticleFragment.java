@@ -38,6 +38,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.actionbarsherlock.view.MenuItem;
 import com.android.volley.Response;
 import com.android.volley.Response.Listener;
 import com.koushikdutta.ion.Ion;
@@ -96,12 +97,22 @@ public class GalleriesArticleFragment extends BaseFragment implements OnClickLis
 			Bundle savedInstanceState) {
 		// Settings
 		View view = inflater.inflate(R.layout.fragment_detail, container, false);
+		actionBar.setDisplayHomeAsUpEnabled(true);
+		setHasOptionsMenu(true);
 		mLayoutParams = new RelativeLayout.LayoutParams(
 				ViewGroup.LayoutParams.WRAP_CONTENT,
 		        ViewGroup.LayoutParams.WRAP_CONTENT);
 		findViews(view);
 		
 		return view;
+	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		if (item.getItemId() == android.R.id.home) {
+			getActivity().getSupportFragmentManager().popBackStack();
+		}
+		return true;
 	}
 	
 	@Override
@@ -280,6 +291,7 @@ public class GalleriesArticleFragment extends BaseFragment implements OnClickLis
 	 * Get detail content for a gallery
 	 */
 	private void getDetailForGallery() {
+		showProgressBar(true);
 		if (mGallery != null) {
 			ImgurAPI.getClient().getDetailGallery(mContext, mGallery.getId(), getListener(), getErrorListener(new TokenHandle() {
 				
@@ -331,6 +343,7 @@ public class GalleriesArticleFragment extends BaseFragment implements OnClickLis
 
 			@Override
 			public void onResponse(JSONObject json) {
+				showProgressBar(false);
 				MGallery gallery = DataParsingController.parseGallery(json);
 				if (!isExploreDetail) {
 					mGallery.setImages(gallery.getImages());
@@ -446,10 +459,12 @@ public class GalleriesArticleFragment extends BaseFragment implements OnClickLis
 	 * @param isUp
 	 */
 	private void postVoteGallery(final String galleryId, final boolean isUp) {
+		showProgressBar(true);
 		ImgurAPI.getClient().voteGallery(mContext, galleryId, isUp, new Listener<JSONObject>() {
 
 			@Override
 			public void onResponse(JSONObject jsonObj) {
+				showProgressBar(false);
 				boolean isSuccess;
 				try {
 					isSuccess = jsonObj.getBoolean(Constant.TAG_PARSE_SUCCESS);
@@ -473,6 +488,7 @@ public class GalleriesArticleFragment extends BaseFragment implements OnClickLis
 			
 			@Override
 			public void onRefreshFailed() {
+				showProgressBar(false);
 				Toast.makeText(mContext, getString(R.string.message_response_error), Toast.LENGTH_SHORT).show();
 			}
 		}));
@@ -482,10 +498,12 @@ public class GalleriesArticleFragment extends BaseFragment implements OnClickLis
 	 * Send a favorite request to specified album
 	 */
 	private void postFavoriteAlbum() {
+		showProgressBar(true);
 		ImgurAPI.getClient().favoriteAlbum(mContext, mGallery.getId(), new Listener<JSONObject>() {
 
 			@Override
 			public void onResponse(JSONObject arg0) {
+				showProgressBar(false);
 				handleOnFavoriteSuccess(Constant.TAG_ALBUM, arg0);
 			}
 		}, getErrorListener(new TokenHandle() {
@@ -497,6 +515,7 @@ public class GalleriesArticleFragment extends BaseFragment implements OnClickLis
 			
 			@Override
 			public void onRefreshFailed() {
+				showProgressBar(false);
 				toggleFavorite();
 				Toast.makeText(mContext, getString(R.string.message_response_error), Toast.LENGTH_SHORT).show();
 			}
@@ -507,10 +526,12 @@ public class GalleriesArticleFragment extends BaseFragment implements OnClickLis
 	 * Send a favorite request to specified image
 	 */
 	private void postFavoriteImage(final String imageId) {
+		showProgressBar(true);
 		ImgurAPI.getClient().favoriteImage(mContext, imageId, new Listener<JSONObject>() {
 
 			@Override
 			public void onResponse(JSONObject arg0) {
+				showProgressBar(false);
 				handleOnFavoriteSuccess(Constant.TAG_IMAGE, arg0);
 			}
 		}, getErrorListener(new TokenHandle() {
@@ -522,6 +543,7 @@ public class GalleriesArticleFragment extends BaseFragment implements OnClickLis
 			
 			@Override
 			public void onRefreshFailed() {
+				showProgressBar(false);
 				toggleFavorite();
 				Toast.makeText(mContext, getString(R.string.message_response_error), Toast.LENGTH_SHORT).show();
 			}

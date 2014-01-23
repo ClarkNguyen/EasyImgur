@@ -1,5 +1,6 @@
 package sg.vinova.easy_imgur.fragment.base;
 
+import sg.vinova.easy_imgur.activity.BaseActivity;
 import sg.vinova.easy_imgur.activity.ContentActivity;
 import sg.vinova.easy_imgur.interfaces.TokenHandle;
 import android.content.Context;
@@ -95,4 +96,18 @@ public class BaseFragment extends SherlockFragment {
 		}
 	}
 
+	/**
+	 * Show the progress bar
+	 * @param visible
+	 */
+	protected void showProgressBar(boolean visible) {
+		if (mContext == null) {
+			return;
+		}
+		
+		if (getActivity() instanceof BaseActivity) {
+			BaseActivity activity = (BaseActivity) mContext;
+			activity.showProgressBar(visible);
+		}
+	}
 }
