@@ -11,7 +11,7 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@android:color/black"
+            android:background="#717473"
             android:orientation="vertical" >
 
             <LinearLayout
@@ -50,7 +50,7 @@
                     android:layout_gravity="center_vertical"
                     android:orientation="vertical" >
 
-                    <TextView
+                    <sg.vinova.easy_imgur.widgets.EllipsizingTextView
                         android:id="@+id/tv_title"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -58,7 +58,7 @@
                         android:paddingLeft="10dp"
                         android:paddingTop="10dp"
                         android:textColor="@android:color/white"
-                        android:textSize="22sp"
+                        android:textSize="18sp"
                         android:textStyle="bold" />
 
                     <TextView
@@ -78,6 +78,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/ll_header"
+                android:background="@android:color/black"
                 android:contentDescription="@string/app_name"
                 android:scaleType="fitCenter" />
 
@@ -87,6 +88,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="250dp"
                 android:layout_below="@+id/ll_header"
+                android:background="@android:color/black"
                 android:visibility="gone" />
 
             <TextView
@@ -167,8 +169,10 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:background="@drawable/bg_link"
+                            android:background="@drawable/bg_share_link"
                             android:gravity="center_horizontal"
+                            android:paddingBottom="5dp"
+                            android:paddingTop="5dp"
                             android:text="@string/text_copy_link"
                             android:textColor="@android:color/white"
                             android:textSize="16sp"
@@ -179,8 +183,10 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"
-                            android:background="@drawable/bg_link"
+                            android:background="@drawable/bg_share_link"
                             android:gravity="center_horizontal"
+                            android:paddingBottom="5dp"
+                            android:paddingTop="5dp"
                             android:text="@string/text_copy_direct"
                             android:textColor="@android:color/white"
                             android:textSize="16sp"
@@ -210,7 +216,7 @@
                 android:layout_height="70dp"
                 android:layout_alignParentRight="true"
                 android:layout_below="@+id/rl_social"
-                android:background="#b45266"
+                android:background="@drawable/bg_vote_up"
                 android:gravity="center_vertical"
                 android:orientation="vertical" >
 
@@ -238,7 +244,7 @@
                 android:layout_height="70dp"
                 android:layout_alignParentRight="true"
                 android:layout_below="@+id/ll_ups"
-                android:background="#ce8593"
+                android:background="@drawable/bg_vote_down"
                 android:gravity="center_vertical"
                 android:orientation="vertical" >
 
@@ -263,17 +269,50 @@
             <TextView
                 android:id="@+id/tv_description"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_alignBottom="@+id/ll_downs"
+                android:layout_height="match_parent"
                 android:layout_alignTop="@+id/ll_ups"
                 android:layout_toLeftOf="@+id/ll_ups"
                 android:background="#717473"
-                android:paddingBottom="30dp"
                 android:paddingLeft="10dp"
                 android:paddingRight="10dp"
                 android:paddingTop="10dp"
+                android:text="description"
                 android:textColor="@android:color/white"
                 android:textSize="16sp" />
+
+            <LinearLayout
+                android:id="@+id/ll_comment"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_below="@+id/tv_description"
+                android:layout_toLeftOf="@+id/ll_ups"
+                android:background="#717473"
+                android:orientation="horizontal"
+                android:weightSum="4" >
+
+                <EditText
+                    android:id="@+id/et_comment"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="3"
+                    android:hint="Submit a comment"
+                    android:textColor="@android:color/white"
+                    android:textColorHint="@android:color/white"
+                    android:textSize="18sp" />
+
+                <TextView
+                    android:id="@+id/tv_comment_submit"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@drawable/bg_comment_submit"
+                    android:gravity="center"
+                    android:padding="10dp"
+                    android:text="Submit"
+                    android:textColor="#858080"
+                    android:textSize="16sp" />
+            </LinearLayout>
         </RelativeLayout>
     </ScrollView>
 

@@ -16,6 +16,7 @@ import sg.vinova.easy_imgur.networking.ImgurAPI;
 import sg.vinova.easy_imgur.utilities.LogUtility;
 import sg.vinova.easy_imgur.utilities.StringUtility;
 import sg.vinova.easy_imgur.utilities.TextRefineUtil;
+import sg.vinova.easy_imgur.widgets.EllipsizingTextView;
 import sg.vinova.easy_imgur.widgets.HackyViewPageScrollView;
 import sg.vinova.easy_imgur.widgets.ViewImagePopupWindow;
 import android.annotation.SuppressLint;
@@ -27,6 +28,7 @@ import android.os.Parcelable;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -54,7 +56,7 @@ public class GalleriesArticleFragment extends BaseFragment implements OnClickLis
 	 * All views
 	 */
 	private TextView tvViewsCount;
-	private TextView tvTitle;
+	private EllipsizingTextView tvTitle;
 	private TextView tvAuthor;
 	
 	private ImageView ivContent;
@@ -137,8 +139,10 @@ public class GalleriesArticleFragment extends BaseFragment implements OnClickLis
 		 * Title
 		 */
 		tvViewsCount = (TextView) view.findViewById(R.id.tv_views_count);
-		tvTitle = (TextView) view.findViewById(R.id.tv_title);
+		tvTitle = (EllipsizingTextView) view.findViewById(R.id.tv_title);
 		tvAuthor = (TextView) view.findViewById(R.id.tv_author);
+		tvTitle.setMaxLines(2);
+		tvTitle.setOnClickListener(this);
 		
 		/**
 		 * Image content
@@ -165,6 +169,12 @@ public class GalleriesArticleFragment extends BaseFragment implements OnClickLis
 			textDetailGallery.setVisibility(View.VISIBLE);
 			pagerContent.setVisibility(View.GONE);
 			textDetailGallery.setOnClickListener(this);
+			if (mGallery.getImages() == null || mGallery.getImages().size() == 0) {
+				textDetailGallery.setClickable(false);
+			} else {
+				textDetailGallery.setClickable(true);
+			}
+			
 		}
 		
 		/**
@@ -206,7 +216,9 @@ public class GalleriesArticleFragment extends BaseFragment implements OnClickLis
 		 */
 		tvViewsCount.setText(mGallery.getViews()+"");
 		tvTitle.setText(TextRefineUtil.refineString(mGallery.getTitle()));
-		tvAuthor.setText(TextRefineUtil.refineString(mGallery.getAccountUrl()));
+		if (!TextUtils.isEmpty(mGallery.getAccountUrl())) {
+			tvAuthor.setText("By " + mGallery.getAccountUrl());	
+		}
 		
 		/**
 		 * Image content
@@ -274,6 +286,11 @@ public class GalleriesArticleFragment extends BaseFragment implements OnClickLis
 		} else {
 			ivFavourite.setImageResource(R.drawable.ic_favorite_negative);
 		}
+		
+		/**
+		 * Description
+		 */
+		tvDescription.setText(TextRefineUtil.refineString(image.getDescription()));
 	}
 	
 	/**
@@ -344,6 +361,7 @@ public class GalleriesArticleFragment extends BaseFragment implements OnClickLis
 			@Override
 			public void onResponse(JSONObject json) {
 				showProgressBar(false);
+				textDetailGallery.setClickable(true);
 				MGallery gallery = DataParsingController.parseGallery(json);
 				if (!isExploreDetail) {
 					mGallery.setImages(gallery.getImages());
@@ -450,6 +468,9 @@ public class GalleriesArticleFragment extends BaseFragment implements OnClickLis
 			} else {
 				toggleVote(false);
 			}
+		} else if (v == tvTitle) {
+			tvTitle.setMaxLines(10);
+			tvTitle.setText(TextRefineUtil.refineString(mGallery.getTitle()));
 		}
 	}
 	
