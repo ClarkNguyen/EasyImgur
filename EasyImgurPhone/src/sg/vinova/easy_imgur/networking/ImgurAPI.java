@@ -1,5 +1,6 @@
 package sg.vinova.easy_imgur.networking;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -20,6 +21,8 @@ import com.android.volley.Response;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.androidquery.AQuery;
+import com.androidquery.callback.AjaxCallback;
 
 public class ImgurAPI {
 
@@ -326,6 +329,7 @@ public class ImgurAPI {
 
 	/**
 	 * Get all meme list
+	 * 
 	 * @param mContext
 	 * @param sort
 	 * @param window
@@ -346,9 +350,42 @@ public class ImgurAPI {
 			url += window + "/";
 		}
 		url += page;
-		
+
 		HashMap<String, String> params = new HashMap<String, String>();
 
 		ImgurAPI.get(mContext, getUrl(url), params, listener, errorListener);
+	}
+
+	/******************************
+	 ******* UPLOAD IMAGE *********
+	 ******************************/
+
+	/**
+	 * Upload image
+	 * @param mcContext
+	 * @param imageFile
+	 * @param album
+	 * @param name
+	 * @param title
+	 * @param description
+	 * @param callback
+	 */
+	public void uploadImage(Context mcContext, String imageFile, String album,
+			String name, String title, String description,
+			AjaxCallback<JSONObject> callback) {
+		AQuery aq = new AQuery(mcContext);
+
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("type", "base64");
+		params.put("image", imageFile);
+		if (!TextUtils.isEmpty(album)) {
+			params.put("album", album);
+		}
+		if (!TextUtils.isEmpty(name)) {
+			params.put("name", name);
+		}
+		params.put("title", title);
+		params.put("description", description);
+		aq.ajax(getUrl("upload"), params, JSONObject.class, callback);
 	}
 }

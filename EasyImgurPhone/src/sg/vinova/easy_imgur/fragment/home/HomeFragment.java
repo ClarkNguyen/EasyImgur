@@ -24,7 +24,6 @@ public class HomeFragment extends BaseFragment {
 
 	private void findViews(View view) {
 		// TODO Auto-generated method stub
-		
 	}
 
 }

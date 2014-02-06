@@ -45,7 +45,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content" >
 
-            <!-- <com.makeramen.RoundedImageView
+            <com.makeramen.RoundedImageView
                 android:id="@+id/ivThumb"
                 android:layout_width="match_parent"
                 android:layout_height="170dp"
@@ -57,9 +57,9 @@
                 app:border_color="#333333"
                 app:border_width="1dp"
                 app:corner_radius="6dp"
-                app:round_background="true" /> -->
+                app:round_background="true" /> 
             
-            <ImageView 
+            <!-- <ImageView 
                 android:layout_width="match_parent"
                 android:id="@+id/ivThumb"
                 android:layout_height="170dp"
@@ -67,7 +67,7 @@
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
                 android:scaleType="centerCrop"
-                android:src="@drawable/bg_default"/>
+                android:src="@drawable/bg_default"/> -->
 
             <ImageButton
                 android:id="@+id/ibGifPlay"

@@ -59,9 +59,6 @@ public class GalleriesFragment extends BaseFragment implements
 	// List adapter
 	private GalleryAdapter adapter;
 
-	// flag check load next page
-	private boolean isMore;
-	
 	// custom paging for load 10 item per scroll
 	private int startIndex;
 	private int endIndex;
@@ -88,7 +85,10 @@ public class GalleriesFragment extends BaseFragment implements
 		View view = inflater.inflate(R.layout.galleries_fragment, container,
 				false);
 		findViews(view);
-
+		isArticle = false;
+		actionBar.setDisplayShowHomeEnabled(true);
+		actionBar.setHomeButtonEnabled(true);
+		actionBar.setDisplayHomeAsUpEnabled(true);
 		return view;
 	}
 
@@ -128,8 +128,8 @@ public class GalleriesFragment extends BaseFragment implements
 					int visibleItemCount, int totalItemCount) {
 				boolean loadMore = firstVisibleItem + visibleItemCount >= totalItemCount;
 				if (loadMore && currentState != SCROLL_STATE_IDLE) {
-					if (isMore) {
-						isMore = false;
+					if (isMoreData) {
+						isMoreData = false;
 						loadGalleriesOnList();
 					}
 				}
@@ -176,7 +176,7 @@ public class GalleriesFragment extends BaseFragment implements
 			for (int i = startIndex; i < endIndex; i++) {
 				galleriesOnList.add(allGalleries.get(i));
 			}
-			isMore = true;
+			isMoreData = true;
 		}
 		
 		adapter.notifyDataSetChanged();
@@ -213,7 +213,7 @@ public class GalleriesFragment extends BaseFragment implements
 					galleriesOnList.clear();
 					allGalleries.addAll(lstTmp);
 					loadGalleriesOnList();
-					isMore = true;
+					isMoreData = true;
 					mPullToRefreshLayout.setRefreshComplete();
 					return;
 				} 
@@ -224,7 +224,7 @@ public class GalleriesFragment extends BaseFragment implements
 						galleriesOnList.add(allGalleries.get(i));
 					}
 					adapter.notifyDataSetChanged();
-					isMore = true;
+					isMoreData = true;
 					return;
 				}
 				

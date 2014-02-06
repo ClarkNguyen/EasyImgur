@@ -8,11 +8,15 @@ import android.support.v4.app.Fragment;
 
 import com.actionbarsherlock.app.ActionBar;
 import com.actionbarsherlock.app.SherlockFragment;
+import com.actionbarsherlock.view.MenuItem;
 import com.android.volley.Response;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 
 public class BaseFragment extends SherlockFragment {
+	
+	// tag
+	public static final String TAG = "BaseFragment";
 
 	public Context mContext;
 
@@ -22,9 +26,15 @@ public class BaseFragment extends SherlockFragment {
 
 	// Paging
 	public int page;
-	
+
 	// Action bar
 	public ActionBar actionBar;
+
+	// flag check load next page
+	public boolean isMoreData;
+	
+	// flag check if in content screen
+	public boolean isArticle;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -37,50 +47,79 @@ public class BaseFragment extends SherlockFragment {
 			imageLoader = ((ContentActivity) getActivity()).getImageLoader();
 			options = ((ContentActivity) getActivity()).getImageLoaderOptions();
 			actionBar = ((ContentActivity) getActivity()).getSupportActionBar();
+			actionBar.setDisplayHomeAsUpEnabled(true);
+			actionBar.setDisplayShowHomeEnabled(true);
+			actionBar.setDisplayShowTitleEnabled(true);
 		}
+		setHasOptionsMenu(true);
+	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		ContentActivity contentActivity = (ContentActivity) getActivity();
+		
+		if (contentActivity == null) {
+			return false;
+		}
+		
+		if (!isArticle) {
+			if (contentActivity.isLeftMenuOpen()) {
+				contentActivity.handleLeftMenu(false);
+			} else {
+				contentActivity.handleLeftMenu(true);
+			}
+		} else {
+			contentActivity.getSupportFragmentManager().popBackStack();
+		}
+		
+		return super.onOptionsItemSelected(item);
 	}
 
 	public Response.ErrorListener getErrorListener(TokenHandle tokenHandle) {
 		if (getActivity() != null && getActivity() instanceof ContentActivity) {
-			return ((ContentActivity) getActivity()).getErrorListener(tokenHandle);
+			return ((ContentActivity) getActivity())
+					.getErrorListener(tokenHandle);
 		}
 		return null;
 	}
-	
+
 	/**********************************
-	 ********* Switch content ********* 
+	 ********* Switch content *********
 	 **********************************/
-	
+
 	public void switchContent(Fragment fragment, boolean addToBackstack,
 			boolean clearBackstack) {
 		if (getActivity() == null) {
 			return;
 		}
-		
+
 		if (getActivity() instanceof ContentActivity) {
-			((ContentActivity) getActivity()).switchContent(fragment, addToBackstack, clearBackstack);
+			((ContentActivity) getActivity()).switchContent(fragment,
+					addToBackstack, clearBackstack);
 		}
 	}
-	
+
 	public void switchContent(Fragment fragment, boolean addToBackstack,
 			String tag) {
 		if (getActivity() == null) {
 			return;
 		}
-		
+
 		if (getActivity() instanceof ContentActivity) {
-			((ContentActivity) getActivity()).switchContent(fragment, addToBackstack, tag);
+			((ContentActivity) getActivity()).switchContent(fragment,
+					addToBackstack, tag);
 		}
 	}
-	
+
 	public void switchContent(Fragment fragment, boolean addToBackstack,
 			boolean clearBackstack, String tag) {
 		if (getActivity() == null) {
 			return;
 		}
-		
+
 		if (getActivity() instanceof ContentActivity) {
-			((ContentActivity) getActivity()).switchContent(fragment, addToBackstack, clearBackstack, tag);
+			((ContentActivity) getActivity()).switchContent(fragment,
+					addToBackstack, clearBackstack, tag);
 		}
 	}
 

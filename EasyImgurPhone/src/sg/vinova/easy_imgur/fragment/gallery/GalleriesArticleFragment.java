@@ -99,7 +99,9 @@ public class GalleriesArticleFragment extends BaseFragment implements OnClickLis
 				ViewGroup.LayoutParams.WRAP_CONTENT,
 		        ViewGroup.LayoutParams.WRAP_CONTENT);
 		findViews(view);
-		
+		isArticle = true;
+		actionBar.setDisplayShowHomeEnabled(false);
+		actionBar.setDisplayHomeAsUpEnabled(true);
 		return view;
 	}
 	

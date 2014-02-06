@@ -3,6 +3,8 @@ package sg.vinova.easy_imgur.activity;
 import sg.vinova.easy_imgur.fragment.gallery.GalleriesFragment;
 import sg.vinova.easy_imgur.fragment.home.HomeFragment;
 import sg.vinova.easy_imgur.fragment.login.LoginFragment;
+import sg.vinova.easy_imgur.fragment.meme.MemesFragment;
+import sg.vinova.easy_imgur.fragment.upload.UploadImageFragment;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
@@ -101,18 +103,38 @@ public class ContentActivity extends BaseActivity implements
 		return super.onCreateOptionsMenu(menu);
 	}
 
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		if (item.getItemId() == android.R.id.home) {
-			if (!drawerLayout.isDrawerOpen(lvCategories)) {
-				drawerLayout.openDrawer(lvCategories);
-			} else {
-				drawerLayout.closeDrawer(lvCategories);
-			}
-
+//	@Override
+//	public boolean onOptionsItemSelected(MenuItem item) {
+//		if (item.getItemId() == android.R.id.home) {
+//			if (!drawerLayout.isDrawerOpen(lvCategories)) {
+//				drawerLayout.openDrawer(lvCategories);
+//			} else {
+//				drawerLayout.closeDrawer(lvCategories);
+//			}
+//
+//		}
+//
+//		return super.onOptionsItemSelected(item);
+//	}
+	
+	/**
+	 * check is menu open or close
+	 * @return
+	 */
+	public boolean isLeftMenuOpen() {
+		return drawerLayout.isDrawerOpen(lvCategories);
+	}
+	
+	/**
+	 * Handle open, close left menu
+	 * @param open
+	 */
+	public void handleLeftMenu(boolean open) {
+		if (open) {
+			drawerLayout.openDrawer(lvCategories);
+		} else {
+			drawerLayout.closeDrawer(lvCategories);
 		}
-
-		return super.onOptionsItemSelected(item);
 	}
 
 	private void setContentForAboveView(Fragment fragment, String tag) {
@@ -190,6 +212,7 @@ public class ContentActivity extends BaseActivity implements
 				
 			case 1:
 				// memes
+				switchContent(new MemesFragment(), true, true, MemesFragment.TAG);
 				currMenuPosition = 1;
 				break;
 				
@@ -204,8 +227,14 @@ public class ContentActivity extends BaseActivity implements
 				break;
 				
 			case 4:
-				// login
+				// upload image
 				currMenuPosition = 4;
+				switchContent(new UploadImageFragment(), true, true, UploadImageFragment.TAG);
+				break;
+				
+			case 5:
+				// login
+				currMenuPosition = 5;
 				switchContent(new LoginFragment(), true, true, LoginFragment.TAG);
 				break;
 

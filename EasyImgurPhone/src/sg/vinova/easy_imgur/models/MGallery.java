@@ -57,6 +57,9 @@ public class MGallery {
 	@SerializedName("link")
 	private String link;
 	
+	@SerializedName("subtype")
+	private String subType;
+	
 	@SerializedName("ups")
 	private int ups;
 	
@@ -72,9 +75,28 @@ public class MGallery {
 	@SerializedName("images_count")
 	private int imagesCount;
 	
+	@SerializedName("deletehash")
+	private String deleteHash;
+	
 	private List<MGallery> images;
 	
 	private boolean isExplored;
+
+	public String getSubType() {
+		return subType;
+	}
+
+	public void setSubType(String subType) {
+		this.subType = subType;
+	}
+
+	public String getDeleteHash() {
+		return deleteHash;
+	}
+
+	public void setDeleteHash(String deleteHash) {
+		this.deleteHash = deleteHash;
+	}
 
 	public String getId() {
 		return id;

@@ -5,20 +5,24 @@ import java.util.List;
 
 import org.json.JSONObject;
 
-import com.android.volley.Response;
-
 import sg.vinova.easy_imgur.activity.R;
+import sg.vinova.easy_imgur.base.DataParsingController;
 import sg.vinova.easy_imgur.fragment.base.BaseFragment;
 import sg.vinova.easy_imgur.interfaces.TokenHandle;
 import sg.vinova.easy_imgur.models.MGallery;
 import sg.vinova.easy_imgur.networking.ImgurAPI;
 import sg.vinova.easy_imgur.widgets.EllipsizingTextView;
+import uk.co.senab.actionbarpulltorefresh.extras.actionbarsherlock.PullToRefreshLayout;
+import uk.co.senab.actionbarpulltorefresh.library.ActionBarPullToRefresh;
+import uk.co.senab.actionbarpulltorefresh.library.listeners.OnRefreshListener;
 import android.content.Context;
 import android.os.Bundle;
 import android.text.format.DateFormat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
+import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
@@ -27,76 +31,142 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
-public class MemesFragment extends BaseFragment implements OnItemClickListener{
-	
+import com.actionbarsherlock.app.ActionBar;
+import com.android.volley.Response;
+
+public class MemesFragment extends BaseFragment implements OnItemClickListener, OnRefreshListener {
+
 	// tag
 	public static final String TAG = "MemesFragment";
-	
+
 	// ListView memes
 	private ListView lvMemes;
-	
+
 	// List data
 	private List<MGallery> memes;
-	
+
 	// adapter
 	private MemeAdapter adapter;
-	
+
+	// pull to refresh layout
+	private PullToRefreshLayout mPullToRefreshLayout;
+
 	public MemesFragment() {
 		memes = new ArrayList<MGallery>();
 	}
-	
+
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		View view = inflater.inflate(R.layout.galleries_fragment, container,
 				false);
 		findViews(view);
-
+		isArticle = false;
+		setHasOptionsMenu(true);
 		return view;
+	}
+	
+	@Override
+	public void onActivityCreated(Bundle savedInstanceState) {
+		super.onActivityCreated(savedInstanceState);
+		actionBar.setDisplayShowHomeEnabled(true);
+		actionBar.setHomeButtonEnabled(true);
+		actionBar.setDisplayHomeAsUpEnabled(true);
+		actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_STANDARD);
 	}
 
 	private void findViews(View view) {
 		lvMemes = (ListView) view.findViewById(R.id.lv_galleries);
 		adapter = new MemeAdapter(mContext, R.layout.row_gallery, memes);
-		
+
 		lvMemes.setAdapter(adapter);
 		lvMemes.setOnItemClickListener(this);
-	}
-	
-	private void getMemeData() {
-		ImgurAPI.getClient().getAllMeme(mContext, null, null, page, getMemeListener(), getErrorListener(new TokenHandle() {
+		
+		lvMemes.setOnScrollListener(new OnScrollListener() {
+			int currentState;
 			
 			@Override
-			public void onRefreshSuccess() {
-				getMemeData();
-			}
-			
-			@Override
-			public void onRefreshFailed() {
-				// TODO Auto-generated method stub
+			public void onScrollStateChanged(AbsListView view, int scrollState) {
+				this.currentState = scrollState;
 				
 			}
-		}));
+			
+			@Override
+			public void onScroll(AbsListView view, int firstVisibleItem,
+					int visibleItemCount, int totalItemCount) {
+				boolean loadMore = firstVisibleItem + visibleItemCount >= totalItemCount;
+				if (loadMore && currentState != SCROLL_STATE_IDLE) {
+					if (isMoreData) {
+						isMoreData = false;
+						page++;
+						getMemeData();
+					}
+				}
+			}
+		});
+
+		// pull to refresh
+		mPullToRefreshLayout = (PullToRefreshLayout) view
+				.findViewById(R.id.ptr_layout);
+		ActionBarPullToRefresh.from(getActivity()).allChildrenArePullable()
+				.listener(this).setup(mPullToRefreshLayout);
 	}
 	
-	
+	@Override
+	public void onRefreshStarted(View view) {
+		page = 0;
+		getMemeData();
+	}
+
+	@Override
+	public void onResume() {
+		super.onResume();
+		if (memes.isEmpty()) {
+			getMemeData();
+		}
+	}
+
+	private void getMemeData() {
+		ImgurAPI.getClient().getAllMeme(mContext, null, null, page,
+				getMemeListener(), getErrorListener(new TokenHandle() {
+
+					@Override
+					public void onRefreshSuccess() {
+						getMemeData();
+					}
+
+					@Override
+					public void onRefreshFailed() {
+						// TODO Auto-generated method stub
+
+					}
+				}));
+	}
+
 	private Response.Listener<JSONObject> getMemeListener() {
 		return new Response.Listener<JSONObject>() {
 
 			@Override
 			public void onResponse(JSONObject json) {
-				// TODO parse data
+				List<MGallery> memesTmp = DataParsingController
+						.parseGalleries(json);
+				if (page == 0) {
+					memes.clear();
+				}
+				isMoreData = true;
+				memes.addAll(memesTmp);
+				adapter.notifyDataSetChanged();
+				mPullToRefreshLayout.setRefreshComplete();
 			}
 		};
 	}
-	
+
 	private class MemeAdapter extends ArrayAdapter<MGallery> {
 
 		private List<MGallery> galleries;
 		private MemeHolder holder;
 
-		public MemeAdapter(Context context, int resource,
-				List<MGallery> objects) {
+		public MemeAdapter(Context context, int resource, List<MGallery> objects) {
 			super(context, resource, objects);
 			this.galleries = objects;
 		}
@@ -149,9 +219,11 @@ public class MemesFragment extends BaseFragment implements OnItemClickListener{
 			} else {
 				holder.ibGifPlay.setVisibility(View.GONE);
 				holder.ivThumb.setImageResource(R.drawable.bg_default);
-//				if (mGallery.getImages() != null && !mGallery.getImages().isEmpty()) {
-//					imageLoader.displayImage(mGallery.getImages().get(0).getLink(), holder.ivThumb, options);
-//				}
+				// if (mGallery.getImages() != null &&
+				// !mGallery.getImages().isEmpty()) {
+				// imageLoader.displayImage(mGallery.getImages().get(0).getLink(),
+				// holder.ivThumb, options);
+				// }
 			}
 
 			return row;
@@ -170,9 +242,9 @@ public class MemesFragment extends BaseFragment implements OnItemClickListener{
 	}
 
 	@Override
-	public void onItemClick(AdapterView<?> parent, View view, int position, long itemId) {
-		// TODO Auto-generated method stub
-		
+	public void onItemClick(AdapterView<?> parent, View view, int position,
+			long itemId) {
+		switchContent(new MemesArticleFragment(memes.get(position)), true, MemesArticleFragment.TAG);
 	}
 
 }
