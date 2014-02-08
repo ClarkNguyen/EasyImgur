@@ -18,6 +18,7 @@ import sg.vinova.easy_imgur.networking.ImgurAPI;
 import sg.vinova.easy_imgur.utilities.LogUtility;
 import sg.vinova.easy_imgur.utilities.TokenUtility;
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -33,6 +34,7 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.android.volley.Response;
@@ -160,14 +162,23 @@ public class UploadImageFragment extends BaseFragment implements
 		// indicate image type and Uri
 		cropIntent.setDataAndType(imageUri, "image/*");
 		// set crop properties
-		cropIntent.putExtra("crop", "true");
-		// cropIntent.putExtra("output", imageUri);
+		cropIntent.putExtra("crop", true);
+		cropIntent.putExtra("outputX", 480);
+		cropIntent.putExtra("outputY", 480);
+		cropIntent.putExtra("aspectX", 1);
+		cropIntent.putExtra("aspectY", 1);
+		cropIntent.putExtra("scale", true);
 		cropIntent.putExtra("return-data", true);
 		// start the activity - we handle returning in onActivityResult
 		startActivityForResult(cropIntent, REQUEST_IMAGE_CROP);
 	}
 
 	private void uploadImage(final Bitmap image) {
+		final ProgressDialog pd = new ProgressDialog(mContext);
+		pd.setMessage("Uploading...");
+		pd.setCancelable(false);
+		pd.setCanceledOnTouchOutside(false);
+		pd.show();
 		// File extStore = Environment.getExternalStorageDirectory();
 		// File imageFile = new File(extStore + "/Download/images.jpeg");
 		// LogUtility.e(TAG, "size: " + imageFile.getAbsolutePath());
@@ -178,10 +189,12 @@ public class UploadImageFragment extends BaseFragment implements
 
 		// convert image to base64 for upload
 		ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-		imageBitmap.compress(Bitmap.CompressFormat.PNG, 100,
+		imageBitmap.compress(Bitmap.CompressFormat.JPEG, 40,
 				byteArrayOutputStream);
 		byte[] byteArray = byteArrayOutputStream.toByteArray();
-		String encodedData = Base64.encodeToString(byteArray, Base64.DEFAULT);
+		StringBuffer encodedData = new StringBuffer();
+		encodedData.append(Base64.encodeToString(byteArray, Base64.DEFAULT));
+//		LogUtility.e(TAG, "encoded: " + encodedData);
 
 		AjaxCallback<JSONObject> callback = new AjaxCallback<JSONObject>() {
 			@Override
@@ -189,6 +202,7 @@ public class UploadImageFragment extends BaseFragment implements
 
 				// get new token when current token is expires.
 				if (status.getCode() == 403) {
+					pd.setMessage("Reloging...");
 					// handle refresh token
 					ImgurAPI.getClient().getNewToken(mContext,
 							new Response.Listener<JSONObject>() {
@@ -197,6 +211,7 @@ public class UploadImageFragment extends BaseFragment implements
 								public void onResponse(JSONObject json) {
 									LogUtility.e(TAG,
 											"RefreshToken: " + json.toString());
+									pd.hide();
 									if (json != null) {
 										try {
 											MUser mUser = TokenUtility
@@ -231,6 +246,7 @@ public class UploadImageFragment extends BaseFragment implements
 								}
 							});
 				} else {
+					pd.hide();
 					Gson gson = new Gson();
 					MGallery mGallery = gson.fromJson(json.toString(),
 							MGallery.class);
@@ -248,7 +264,7 @@ public class UploadImageFragment extends BaseFragment implements
 			callback.header("Authorization", "Client-ID " + Constant.CLIENT_ID);
 		}
 
-		ImgurAPI.getClient().uploadImage(mContext, encodedData, null, null,
+		ImgurAPI.getClient().uploadImage(mContext, encodedData.toString(), null, null,
 				"sample", "sample image upload", callback);
 	}
 }
